@@ -39,16 +39,37 @@ class ExtrahopConnector(BaseConnector):
         # TODO find better way to return response headers
         self._response_headers = None
 
-    def _parse_extrahop_location_header(self, location):
+    def _parse_extrahop_location_header(self, location, action_result):
 
         # Parse the object id from the location header
         if location:
             last_slash_index = location.rindex('/') + 1
             location_id = location[last_slash_index:]
             if location_id.isdigit():
-                return int(location_id)
+                return RetVal(phantom.APP_SUCCESS, int(location_id))
         # return error in any other case
-        return
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse ExtraHop location header"), location)
+
+    def _get_extrahop_api_device_id(self, ip_address, action_result):
+
+        device_uri = "/api/v1/devices?limit=100&search_type=ip%20address&value=" + ip_address
+
+        self.save_progress("Making REST call to {}".format(device_uri))
+
+        # make rest call to get the device
+        ret_val, get_devices_response = self._make_rest_call(device_uri, action_result)
+
+        if (phantom.is_fail(ret_val)):
+            # the call to the 3rd party device or service failed, reassemble RetVal and return
+            return RetVal(ret_val, get_devices_response)
+
+        # Grab device ID from response
+        # TODO how to handle more than one device being returned (currently will just take the first)
+        if get_devices_response and get_devices_response[0] and 'id' in get_devices_response[0]:
+            return RetVal(phantom.APP_SUCCESS, get_devices_response[0]['id'])
+        else:
+            # Handle device not being found
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "ExtraHop device not found with IP = {}".format(ip_address)), get_devices_response)
 
     def _process_empty_reponse(self, response, action_result):
 
@@ -155,7 +176,7 @@ class ExtrahopConnector(BaseConnector):
                 # auth=(username, password),  # basic authentication
                 json=data,
                 headers=headers,
-                verify=config.get('verify_server_cert', False),
+                verify=config.get('verify_server_cert', True),
                 params=params)
         except Exception as e:
             return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json)
@@ -189,7 +210,7 @@ class ExtrahopConnector(BaseConnector):
         self.save_progress("Test Connectivity to ExtraHop Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_get_devices(self, param):
+    def _handle_get_device(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -220,6 +241,10 @@ class ExtrahopConnector(BaseConnector):
             for device_obj in get_devices_response:
                 action_result.add_data(device_obj)
 
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary["device_count"] = len(ip_addresses)
+
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -244,26 +269,13 @@ class ExtrahopConnector(BaseConnector):
 
         # Grab EH device ID
         if not eh_api_id:
-
-            device_uri = "/api/v1/devices?limit=100&search_type=ip%20address&value=" + ip_address
-
-            self.save_progress("Making REST call to {}".format(device_uri))
-
-            # make rest call to get the device
-            ret_val, get_devices_response = self._make_rest_call(device_uri, action_result)
+            # get extrahop api device id by ip address
+            ret_val, eh_api_id = self._get_extrahop_api_device_id(ip_address, action_result)
 
             if (phantom.is_fail(ret_val)):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
                 # so just return from here
                 return action_result.get_status()
-
-            # Grab device ID from response
-            # TODO how to handle more than one device being returned (currently will just take the first)
-            if get_devices_response and get_devices_response[0] and 'id' in get_devices_response[0]:
-                eh_api_id = get_devices_response[0]['id']
-            else:
-                # Handle device not being found
-                return RetVal(action_result.set_status(phantom.APP_ERROR, "ExtraHop device not found with IP = {}".format(ip_address)), get_devices_response)
 
         # Convert device ID to int
         eh_api_id = int(eh_api_id)
@@ -333,6 +345,10 @@ class ExtrahopConnector(BaseConnector):
                 # Add the peer into the data section
                 action_result.add_data(get_device_response)
 
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary["peer_count"] = len(unique_peer_ids)
+
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -355,26 +371,13 @@ class ExtrahopConnector(BaseConnector):
 
         # Grab EH device ID
         if not eh_api_id:
-
-            device_uri = "/api/v1/devices?limit=100&search_type=ip%20address&value=" + ip_address
-
-            self.save_progress("Making REST call to {}".format(device_uri))
-
-            # make rest call to get the device
-            ret_val, get_devices_response = self._make_rest_call(device_uri, action_result)
+            # get extrahop api device id by ip address
+            ret_val, eh_api_id = self._get_extrahop_api_device_id(ip_address, action_result)
 
             if (phantom.is_fail(ret_val)):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
                 # so just return from here
                 return action_result.get_status()
-
-            # Grab device ID from response
-            # TODO how to handle more than one device being returned (currently will just take the first)
-            if get_devices_response and get_devices_response[0] and 'id' in get_devices_response[0]:
-                eh_api_id = get_devices_response[0]['id']
-            else:
-                # Handle device not being found
-                return RetVal(action_result.set_status(phantom.APP_ERROR, "ExtraHop device not found with IP = {}".format(ip_address)), get_devices_response)
 
         # Convert device ID to int
         eh_api_id = int(eh_api_id)
@@ -417,19 +420,24 @@ class ExtrahopConnector(BaseConnector):
         # Clean up sets for presentation
         # TODO remove OTHER? does it have value?
         unique_client_protocols.discard('OTHER')
-        unique_client_protocols = ', '.join(sorted(unique_client_protocols))
+        unique_client_protocols_str = ', '.join(sorted(unique_client_protocols))
         unique_server_protocols.discard('OTHER')
-        unique_server_protocols = ', '.join(sorted(unique_server_protocols))
+        unique_server_protocols_str = ', '.join(sorted(unique_server_protocols))
 
         # Add the protocols into the data section
-        action_result.add_data({"client_protocols": unique_client_protocols,
-                                "server_protocols": unique_server_protocols})
+        action_result.add_data({"client_protocols": unique_client_protocols_str,
+                                "server_protocols": unique_server_protocols_str})
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary["client_protocol_count"] = len(unique_client_protocols)
+        summary["server_protocol_count"] = len(unique_server_protocols)
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_discover_new_devices(self, param):
+    def _handle_detect_devices(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -444,6 +452,7 @@ class ExtrahopConnector(BaseConnector):
         seconds = int(minutes) * 60
         time_now = time.time()
         new_device_cutoff_time_ms = int((time_now - seconds) * 1000)
+        new_devices_count = 0
 
         if activity_type.lower() in ('gateway', 'node', 'remote'):
             # TODO what should device limit be?
@@ -470,12 +479,17 @@ class ExtrahopConnector(BaseConnector):
                 # Add the response into the data section if the device is new
                 if discover_time_ms >= new_device_cutoff_time_ms:
                     action_result.add_data(device_obj)
+                    new_devices_count += 1
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary["new_devices_count"] = new_devices_count
 
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_create_custom_device(self, param):
+    def _handle_create_device(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -518,12 +532,12 @@ class ExtrahopConnector(BaseConnector):
         # Retrieve the custom device id in the location response header
         # TODO find better way to return response headers
         returned_location = self._response_headers.get('location')
-        custom_device_id = self._parse_extrahop_location_header(returned_location)
+        ret_val, custom_device_id = self._parse_extrahop_location_header(returned_location, action_result)
 
-        # Handle tag location being unparsable
-        if not custom_device_id:
-            return RetVal(action_result.set_status(phantom.APP_ERROR,
-                "Unable to parse ExtraHop location header of custom device with extrahop_id = {}".format(extrahop_id)), returned_location)
+        if (phantom.is_fail(ret_val)):
+                # the call to the 3rd party device or service failed, action result should contain all the error details
+                # so just return from here
+                return action_result.get_status()
 
         criteria = {
             "custom_device_id": extrahop_id,
@@ -545,7 +559,8 @@ class ExtrahopConnector(BaseConnector):
         # Add the response into the data section
         action_result.add_data({
             'name': name,
-            'custom_device_id': extrahop_id
+            'custom_device_id': extrahop_id,
+            'cidr': cidr
         })
 
         # Add a dictionary that is made up of the most important values from data into the summary
@@ -575,26 +590,13 @@ class ExtrahopConnector(BaseConnector):
 
         # Grab EH device ID
         if not eh_api_id:
-
-            device_uri = "/api/v1/devices?limit=100&search_type=ip%20address&value=" + ip_address
-
-            self.save_progress("Making REST call to {}".format(device_uri))
-
-            # make rest call to get devices
-            ret_val, get_devices_response = self._make_rest_call(device_uri, action_result)
+            # get extrahop api device id by ip address
+            ret_val, eh_api_id = self._get_extrahop_api_device_id(ip_address, action_result)
 
             if (phantom.is_fail(ret_val)):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
                 # so just return from here
                 return action_result.get_status()
-
-            # Grab device ID from response
-            # TODO how to handle more than one device being returned (currently will just take the first)
-            if get_devices_response and get_devices_response[0] and 'id' in get_devices_response[0]:
-                eh_api_id = get_devices_response[0]['id']
-            else:
-                # Handle device not being found
-                return RetVal(action_result.set_status(phantom.APP_ERROR, "ExtraHop device not found with IP = {}".format(ip_address)), get_devices_response)
 
         # Convert device ID to int
         eh_api_id = int(eh_api_id)
@@ -632,11 +634,12 @@ class ExtrahopConnector(BaseConnector):
                 return action_result.get_status()
 
             returned_location = self._response_headers.get('location')
-            tag_id = self._parse_extrahop_location_header(returned_location)
+            ret_val, tag_id = self._parse_extrahop_location_header(returned_location, action_result)
 
-            # Handle tag location being unparsable
-            if not tag_id:
-                return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse ExtraHop location header of tag with name = {}".format(tag)), returned_location)
+            if (phantom.is_fail(ret_val)):
+                # the call to the 3rd party device or service failed, action result should contain all the error details
+                # so just return from here
+                return action_result.get_status()
 
         assign_tag_body = {
             "assign": [eh_api_id]
@@ -659,6 +662,11 @@ class ExtrahopConnector(BaseConnector):
             'tag_id': tag_id
         })
 
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary["tag"] = tag
+        summary["extrahop_device_id"] = eh_api_id
+
         # Return success, no need to set the message, only the status
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -675,8 +683,8 @@ class ExtrahopConnector(BaseConnector):
         if action_id == 'test_connectivity':
             ret_val = self._handle_test_connectivity(param)
 
-        elif action_id == 'get_devices':
-            ret_val = self._handle_get_devices(param)
+        elif action_id == 'get_device':
+            ret_val = self._handle_get_device(param)
 
         elif action_id == 'get_peers':
             ret_val = self._handle_get_peers(param)
@@ -684,11 +692,11 @@ class ExtrahopConnector(BaseConnector):
         elif action_id == 'get_protocols':
             ret_val = self._handle_get_protocols(param)
 
-        elif action_id == 'discover_new_devices':
-            ret_val = self._handle_discover_new_devices(param)
+        elif action_id == 'detect_devices':
+            ret_val = self._handle_detect_devices(param)
 
-        elif action_id == 'create_custom_device':
-            ret_val = self._handle_create_custom_device(param)
+        elif action_id == 'create_device':
+            ret_val = self._handle_create_device(param)
 
         elif action_id == 'tag_device':
             ret_val = self._handle_tag_device(param)
