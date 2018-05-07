@@ -1,0 +1,978 @@
+{
+    "appid": "0c173506-b5ab-4c9f-a78c-68dea794232c",
+    "name": "ExtraHop",
+    "description": "This app integrates with the ExtraHop platform to perform investigative actions based on real-time network data",
+    "type": "network security",
+    "product_vendor": "ExtraHop Networks",
+    "logo": "extrahop_light.svg",
+    "logo_dark": "extrahop_dark.svg",
+    "product_name": "ExtraHop",
+    "product_version_regex": ".*",
+    "publisher": "ExtraHop",
+    "license": "Copyright (c) ExtraHop Networks, 2018",
+    "app_version": "1.0.2",
+    "utctime_updated": "2018-04-23T22:25:13.383171Z",
+    "package_name": "phantom_extrahop",
+    "main_module": "extrahop_connector.pyc",
+    "min_phantom_version": "3.0.284",
+    "app_wizard_version": "1.0.0",
+    "configuration": {
+        "base_url": {
+            "description": "IP Address or Hostname",
+            "data_type": "string",
+            "required": true,
+            "order": 0
+        },
+        "verify_server_cert": {
+            "description": "Verify server certificate",
+            "data_type": "boolean",
+            "default": true,
+            "required": true,
+            "order": 1
+        },
+        "api_key": {
+            "description": "REST API Key",
+            "data_type": "string",
+            "required": true,
+            "order": 2
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get device",
+            "identifier": "get_device",
+            "description": "Get device details from the ExtraHop",
+            "verbose": "This action will get more details about a device given its IP address. Details include MAC address, dhcp name, first discovered time, device type, and more.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP Address",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "allow_list": true,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr4",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ipv4",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.macaddr",
+                    "data_type": "string",
+                    "contains": [
+                        "mac address"
+                    ],
+                    "column_name": "mac",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.dhcp_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "host name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.dns_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "dns name",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.device_class",
+                    "data_type": "string",
+                    "column_name": "device class",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "extrahop api id",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.is_l3",
+                    "data_type": "boolean",
+                    "column_name": "is L3",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.vendor",
+                    "data_type": "string",
+                    "column_name": "vendor",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.discover_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr6",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.display_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.netbios_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.user_mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.cdp_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.vlanid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.parent_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.node_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.extrahop_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.default_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis_level",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.on_watchlist",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get peers",
+            "identifier": "get_peers",
+            "description": "Get a list of peers that a device communicated with in the last N minutes",
+            "verbose": "This action retrieves a list of all of the peers that a device communicated with in the last N minutes, optionally filtered by role and/or protocol.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP Address of device",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                },
+                "minutes": {
+                    "description": "Minutes to look back",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": false,
+                    "default": 30,
+                    "order": 1
+                },
+                "peer_role": {
+                    "description": "Filter by peer role",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "value_list": ["any", "client", "server"],
+                    "default": "any",
+                    "order": 2
+                },
+                "protocol": {
+                    "description": "Filter by protocol",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "default": "any",
+                    "order": 3
+                },
+                "eh_api_id": {
+                    "description": "ExtraHop API id",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 4
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr4",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ipv4",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.macaddr",
+                    "data_type": "string",
+                    "contains": [
+                        "mac address"
+                    ],
+                    "column_name": "mac",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.dhcp_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "host name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.dns_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "dns name",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.device_class",
+                    "data_type": "string",
+                    "column_name": "device class",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "extrahop api id",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.is_l3",
+                    "data_type": "boolean",
+                    "column_name": "is L3",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.vendor",
+                    "data_type": "string",
+                    "column_name": "vendor",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.discover_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr6",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.display_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.netbios_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.user_mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.cdp_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.vlanid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.parent_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.node_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.extrahop_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.default_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis_level",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.on_watchlist",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.minutes",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.peer_role",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.protocol",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.eh_api_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get protocols",
+            "identifier": "get_protocols",
+            "description": "Get a list of protocols that a device communicated in the last N minutes",
+            "verbose": "This action retrieves a list of all of the protocols that a device communicated over the last N minutes, optionally filtered by role.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "ip": {
+                    "description": "IP Address of device",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                },
+                "minutes": {
+                    "description": "Minutes to look back",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": false,
+                    "default": 30,
+                    "order": 1
+                },
+                "eh_api_id": {
+                    "description": "ExtraHop API id",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.client_protocols",
+                    "data_type": "string",
+                    "column_name": "client protocols",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.server_protocols",
+                    "data_type": "string",
+                    "column_name": "server protocols",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.minutes",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.eh_api_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "detect devices",
+            "identifier": "detect_devices",
+            "description": "Get a list of newly discovered devices classified in a particular activity group on your network in the last N minutes",
+            "verbose": "This action retrieves a list of newly discovered devices classified in a particular activity group that first communicated on your network in the last N minutes.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "activity_type": {
+                    "description": "Activity type",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "value_list": ["aaa_client", "aaa_server", "ajp_client", "ajp_server", "amf_client", "amf_server", "app", "cifs_client", "cifs_server", "db_client", "db_server", "dhcp_client", "dhcp_server", "dns_client", "dns_server", "ftp_client", "ftp_server", "gateway", "http_client", "http_server", "ibmmq_client", "ica_client", "ica_server", "kerberos_client", "kerberos_server", "ldap_client", "ldap_server", "memcache_client", "memcache_server", "mongo_client", "mongo_server", "net", "nfs_client", "nfs_server", "node", "pop3_client", "pop3_server", "rdp_client", "rdp_server", "remote", "rpc_client", "rpc_server", "rtcp", "rtp", "sip_client", "sip_server", "smtp_client", "smtp_server", "ssh_client", "ssh_server", "ssl_client", "ssl_server", "tcp", "telnet_client", "telnet_server", "udp", "websocket_client", "websocket_server"],
+                    "default": "dns_server",
+                    "order": 0
+                },
+                "minutes": {
+                    "description": "Minutes of look back",
+                    "data_type": "numeric",
+                    "required": true,
+                    "primary": false,
+                    "default": 30,
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr4",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ipv4",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.macaddr",
+                    "data_type": "string",
+                    "contains": [
+                        "mac address"
+                    ],
+                    "column_name": "mac",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.dhcp_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "host name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.dns_name",
+                    "data_type": "string",
+                    "contains": [
+                        "host name"
+                    ],
+                    "column_name": "dns name",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.discover_time",
+                    "data_type": "numeric",
+                    "column_name": "discover time",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.device_class",
+                    "data_type": "string",
+                    "column_name": "device class",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "extrahop api id",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.data.*.is_l3",
+                    "data_type": "boolean",
+                    "column_name": "is L3",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "action_result.data.*.vendor",
+                    "data_type": "string",
+                    "column_name": "vendor",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.data.*.ipaddr6",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.display_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.netbios_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.user_mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.cdp_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.vlanid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.parent_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.node_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mod_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.extrahop_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.custom_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.default_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis_level",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.analysis",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.on_watchlist",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.activity_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.minutes",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "create device",
+            "identifier": "create_device",
+            "description": "Create a new custom device on the ExtraHop",
+            "verbose": "This action will create a new custom device on the ExtraHop appliance with a single IP address. This action is expected to be used with endpoints, which are not typically tracked individually with full analysis.",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "ip": {
+                    "description": "IP Address",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                },
+                "name": {
+                    "description": "The friendly name for the custom device",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 1
+                },
+                "author": {
+                    "description": "The name of the custom device creator",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 2
+                },
+                "description": {
+                    "description": "An optional description of the custom device",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 3
+                },
+                "cidr": {
+                    "description": "CIDR block",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 5
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.custom_device_id",
+                    "data_type": "string",
+                    "column_name": "custom device id",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 3
+                },                
+                {
+                    "data_path": "action_result.data.*.cidr",
+                    "data_type": "string",
+                    "column_name": "cidr",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.author",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.cidr",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "tag device",
+            "identifier": "tag_device",
+            "description": "Tag an existing device on the ExtraHop",
+            "verbose": "This action will tag a device on the ExtraHop appliance. Normally tags are used to control device membership in dynamic groups.",
+            "type": "investigate",
+            "read_only": false,
+            "parameters": {
+                "ip": {
+                    "description": "IP Address",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                },
+                "tag": {
+                    "description": "Tag Name",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "default": "suspicious",
+                    "order": 1
+                },
+                "eh_api_id": {
+                    "description": "ExtraHop Device API ID",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "ip",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.tag",
+                    "data_type": "string",
+                    "column_name": "tag",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.tag_id",
+                    "data_type": "string",
+                    "column_name": "tag id",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.eh_api_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        }
+    ]
+}
