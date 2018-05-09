@@ -14,7 +14,7 @@
     "utctime_updated": "2018-04-23T22:25:13.383171Z",
     "package_name": "phantom_extrahop",
     "main_module": "extrahop_connector.pyc",
-    "min_phantom_version": "3.0.284",
+    "min_phantom_version": "3.5.180",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "base_url": {
@@ -49,9 +49,9 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "get device",
+            "action": "get device info",
             "identifier": "get_device",
-            "description": "Get device details from the ExtraHop",
+            "description": "Get device details from ExtraHop",
             "verbose": "This action will get more details about a device given its IP address. Details include MAC address, dhcp name, first discovered time, device type, and more.",
             "type": "investigate",
             "read_only": true,
@@ -568,9 +568,9 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "detect devices",
+            "action": "get devices",
             "identifier": "detect_devices",
-            "description": "Get a list of newly discovered devices classified in a particular activity group on your network in the last N minutes",
+            "description": "Get a list of newly discovered devices",
             "verbose": "This action retrieves a list of newly discovered devices classified in a particular activity group that first communicated on your network in the last N minutes.",
             "type": "investigate",
             "read_only": true,
