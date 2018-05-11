@@ -32,7 +32,7 @@
         },
         "api_key": {
             "description": "REST API Key",
-            "data_type": "string",
+            "data_type": "password",
             "required": true,
             "order": 2
         }
