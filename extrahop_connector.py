@@ -328,7 +328,7 @@ class ExtrahopConnector(BaseConnector):
             # Now post process the data
             # Add the response into the data section
             for device_obj in get_devices_response:
-                action_result.add_data(device_obj)
+                action_result.add_data(self._sanitize_object(device_obj))
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
@@ -425,7 +425,7 @@ class ExtrahopConnector(BaseConnector):
             # Add device object to the results list
             if get_device_response:
                 # Add the peer into the data section
-                action_result.add_data(get_device_response)
+                action_result.add_data(self._sanitize_object(get_device_response))
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
@@ -499,8 +499,10 @@ class ExtrahopConnector(BaseConnector):
         unique_server_protocols_str = ', '.join(sorted(unique_server_protocols))
 
         # Add the protocols into the data section
-        action_result.add_data({"client_protocols": unique_client_protocols_str,
-                                "server_protocols": unique_server_protocols_str})
+        action_result.add_data({
+            "client_protocols": unique_client_protocols_str if unique_client_protocols_str else None,
+            "server_protocols": unique_server_protocols_str if unique_server_protocols_str else None
+        })
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
@@ -538,6 +540,24 @@ class ExtrahopConnector(BaseConnector):
             parameter["offset"] += EXTRAHOP_DEFAULT_LIMIT
 
         return phantom.APP_SUCCESS, records_list
+
+    def _sanitize_object(self, object):
+        """
+        Recursively remove empty lists, empty dicts, or None elements from a dictionary.
+        :param d: Input dictionary.
+        :type d: dict
+        :return: Dictionary with all empty lists, and empty dictionaries removed.
+        :rtype: dict
+        """
+
+        def empty(x):
+            return x is None or x == {} or x == [] or x == ""
+
+        if isinstance(object, list):
+            return [v for v in (self._sanitize_object(v) for v in object) if not empty(v)]
+        if isinstance(object, dict):
+            return {k: v for k, v in ((k, self._sanitize_object(v)) for k, v in object.items()) if not empty(v)}
+        return object
 
     def _handle_detect_devices(self, param):
 
@@ -591,6 +611,7 @@ class ExtrahopConnector(BaseConnector):
         # Find devices discovered only in the last N minutes
         for device_obj in get_devices_response:
             if 'discover_time' in device_obj:
+                device_obj = self._sanitize_object(device_obj)
                 discover_time_ms = device_obj['discover_time']
                 # Add the response into the data section if the device is new
                 if discover_time_ms >= new_device_cutoff_time_ms:
