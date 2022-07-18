@@ -30,7 +30,7 @@ EXTRAHOP_TAG_TO_DEVICE_ENDPOINT = '/api/v1/tags/{}/devices'
 
 # Default values
 EXTRAHOP_DEFAULT_TIMEOUT = 30
-EXTRAHOP_DEFAULT_LIMIT = 100
+EXTRAHOP_DEFAULT_LIMIT = 500
 
 # Validation for value_list
 EXTRAHOP_PEER_ROLE_LIST = ["client", "server", "any"]

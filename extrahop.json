@@ -414,8 +414,8 @@
         {
             "action": "get peers",
             "identifier": "get_peers",
-            "description": "Get a list of peers that a device communicated with in the last N minutes",
-            "verbose": "This action retrieves a list of all of the peers that a device communicated with in the last N minutes, optionally filtered by role and/or protocol.",
+            "description": "Get a list of peers that a device communicated within the last N minutes",
+            "verbose": "This action retrieves a list of all of the peers that a device communicated within the last N minutes, optionally filtered by role and/or protocol.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1446,7 +1446,7 @@
             "identifier": "tag_device",
             "description": "Tag an existing device on the ExtraHop",
             "verbose": "This action will tag a device on the ExtraHop appliance. Normally tags are used to control device membership in dynamic groups.",
-            "type": "investigate",
+            "type": "generic",
             "read_only": false,
             "parameters": {
                 "ip": {
