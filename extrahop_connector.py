@@ -306,6 +306,9 @@ class ExtrahopConnector(BaseConnector):
         ip_addresses = [x.strip() for x in param['ip'].split(',')]
         ip_addresses = list(filter(None, ip_addresses))
 
+        # Remove duplicate IPs from the list
+        ip_addresses = list(set(ip_addresses))
+
         parameters = {
             "search_type": "ip address",
             "value": None
@@ -641,7 +644,6 @@ class ExtrahopConnector(BaseConnector):
         name = param.get('name', "Phantom-{}".format(ip_address))
         author = param.get('author', 'Phantom')
         description = param.get('description', 'Device created by Phantom integration for endpoint inspection')
-        extrahop_id = param.get('extrahop_id', "PH-{}".format(ip_address))
         cidr = param.get('cidr')
 
         # Create the new [device]
@@ -650,7 +652,6 @@ class ExtrahopConnector(BaseConnector):
             "author": author,
             "description": description,
             "disabled": False,
-            "extrahop_id": extrahop_id,
             "criteria": [{
                 "ipaddr": ip_address + cidr if cidr else ip_address,
             }]
@@ -669,8 +670,7 @@ class ExtrahopConnector(BaseConnector):
 
         # Add the response into the data section
         data = {
-            'name': name,
-            'custom_device_id': extrahop_id,
+            'name': name
         }
         if cidr:
             data['cidr'] = cidr
@@ -679,7 +679,6 @@ class ExtrahopConnector(BaseConnector):
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
         summary['name'] = name
-        summary['extrahop_id'] = extrahop_id
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -713,7 +712,7 @@ class ExtrahopConnector(BaseConnector):
         # Search for tag in tags
         for tag_obj in get_tags_response:
             # if tag names match (case-insensitive) then grab the tag id
-            if tag_obj['name'].lower() == tag.lower():
+            if tag_obj['name'] == tag:
                 tag_id = tag_obj['id']
                 break
         else:

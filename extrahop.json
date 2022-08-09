@@ -415,7 +415,7 @@
             "action": "get peers",
             "identifier": "get_peers",
             "description": "Get a list of peers that a device communicated within the last N minutes",
-            "verbose": "This action retrieves a list of all of the peers that a device communicated within the last N minutes, optionally filtered by role and/or protocol.",
+            "verbose": "This action retrieves a list of all of the peers that a device communicated within the last N minutes, optionally filtered by role and/or protocol. Either 'ip' or 'eh_api_id' parameter is required. If both the parameters are provided, 'eh_api_id' will be considered.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -756,7 +756,7 @@
             "action": "get protocols",
             "identifier": "get_protocols",
             "description": "Get a list of protocols that a device communicated in the last N minutes",
-            "verbose": "This action retrieves a list of all of the protocols that a device communicated over the last N minutes, optionally filtered by role.",
+            "verbose": "This action retrieves a list of all of the protocols that a device communicated over the last N minutes, optionally filtered by role. Either 'ip' or 'eh_api_id' parameter is required. If both the parameters are provided, 'eh_api_id' will be considered.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1383,28 +1383,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.custom_device_id",
-                    "data_type": "string",
-                    "column_name": "Custom Device ID",
-                    "column_order": 1,
-                    "example_values": [
-                        "PH-208.14.6.61"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "column_name": "Name",
                     "column_order": 0,
                     "example_values": [
                         "Custom IP"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.extrahop_id",
-                    "data_type": "string",
-                    "example_values": [
-                        "PH-208.14.6.61"
                     ]
                 },
                 {
@@ -1418,7 +1402,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Name: Custom IP, Extrahop id: PH-208.14.6.61"
+                        "Name: Custom IP"
                     ]
                 },
                 {
@@ -1445,7 +1429,7 @@
             "action": "tag device",
             "identifier": "tag_device",
             "description": "Tag an existing device on the ExtraHop",
-            "verbose": "This action will tag a device on the ExtraHop appliance. Normally tags are used to control device membership in dynamic groups.",
+            "verbose": "This action will tag a device on the ExtraHop appliance. Normally tags are used to control device membership in dynamic groups. Either 'ip' or 'eh_api_id' parameter is required. If both the parameters are provided, 'eh_api_id' will be considered.",
             "type": "generic",
             "read_only": false,
             "parameters": {
