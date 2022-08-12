@@ -261,7 +261,7 @@ class ExtrahopConnector(BaseConnector):
                 url,
                 json=data,
                 headers=headers,
-                verify=config.get('verify_ssl', True),
+                verify=config.get('verify_server_cert', True),
                 params=params,
                 timeout=EXTRAHOP_DEFAULT_TIMEOUT
             )
