@@ -585,7 +585,7 @@ class ExtrahopConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        ret_val, limit = self._validate_integer(action_result, param.get('limit', 1000), EXTRAHOP_OFFSET_KEY)
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', 1000), EXTRAHOP_LIMIT_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
