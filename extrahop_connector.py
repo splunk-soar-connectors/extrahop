@@ -711,7 +711,7 @@ class ExtrahopConnector(BaseConnector):
 
         # Search for tag in tags
         for tag_obj in get_tags_response:
-            # if tag names match (case-insensitive) then grab the tag id
+            # if tag names match then grab the tag id
             if tag_obj['name'] == tag:
                 tag_id = tag_obj['id']
                 break
