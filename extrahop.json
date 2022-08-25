@@ -414,8 +414,8 @@
         {
             "action": "get peers",
             "identifier": "get_peers",
-            "description": "Get a list of peers that a device communicated within the last N minutes",
-            "verbose": "This action retrieves a list of all of the peers that a device communicated within the last N minutes, optionally filtered by role and/or protocol. Either 'ip' or 'eh_api_id' parameter is required. If both the parameters are provided, 'eh_api_id' will be considered.",
+            "description": "Get a list of peers that a device communicated with within the last N minutes",
+            "verbose": "This action retrieves a list of all of the peers that a device communicated with within the last N minutes, optionally filtered by role and/or protocol. Either 'ip' or 'eh_api_id' parameter is required. If both the parameters are provided, 'eh_api_id' will be considered.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
