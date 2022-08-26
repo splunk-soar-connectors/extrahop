@@ -61,7 +61,7 @@
             "read_only": true,
             "parameters": {
                 "ip": {
-                    "description": "Comma separated IP addresses",
+                    "description": "Comma-separated IP addresses",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
