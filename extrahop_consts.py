@@ -39,9 +39,9 @@ EXTRAHOP_ACTIVITY_TYPE_LIST = ["any", "name", "discovery_id", "ip address", "mac
 EXTRAHOP_INVALID_SELECTION = "Invalid '{0}' selected. Must be one of: {1}."
 
 # Constants relating to 'validate_integer'
-EXTRAHOP_VALID_INT_MSG = "Please provide a valid integer value in the '{param}' parameter"
-EXTRAHOP_NON_NEG_NON_ZERO_INT_MSG = "Please provide a valid non-zero positive integer value in '{param}' parameter"
-EXTRAHOP_NON_NEG_INT_MSG = "Please provide a valid non-negative integer value in the '{param}' parameter"
+EXTRAHOP_VALID_INT_MSG = "Please provide a valid integer value in the {param}"
+EXTRAHOP_NON_NEG_NON_ZERO_INT_MSG = "Please provide a valid non-zero positive integer value in {param}"
+EXTRAHOP_NON_NEG_INT_MSG = "Please provide a valid non-negative integer value in the {param}"
 
 EXTRAHOP_EH_API_ID_KEY = "'eh_api_id' action parameter"
 EXTRAHOP_MINUTES_KEY = "'minutes' action parameter"
