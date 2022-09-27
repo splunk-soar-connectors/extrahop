@@ -1,1 +1,10 @@
 **Unreleased**
+
+* Added Test Connectivity for Extrahop Reveal(x) 360
+* Updated endpoint for device related actions
+* Added 'filter'and 'json_object' parameter in the 'get devices' action
+* Added 'json_object' parameter in the 'create device' action
+* Added on-poll functionality for the following:
+    * Detections
+    * Metrics
+    * Packets
