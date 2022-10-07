@@ -8,3 +8,6 @@
     * Detections
     * Metrics
     * Packets
+* Added two new actions
+    * Get metrics
+    * Get packets

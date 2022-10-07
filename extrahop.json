@@ -15,7 +15,7 @@
     "package_name": "phantom_extrahop",
     "python_version": "3",
     "main_module": "extrahop_connector.py",
-    "min_phantom_version": "5.3.3",
+    "min_phantom_version": "5.3.4",
     "app_wizard_version": "1.0.0",
     "fips_compliant": true,
     "latest_tested_versions": [
@@ -1520,7 +1520,6 @@
                     "example_values": [
                         "{ \"author\": \"test_author\", \"criteria\": [ { \"ipaddr\": \"10.40.2.3\", \"ipaddr_direction\": \"any\", \"src_port_max\": 443, \"src_port_min\": 10, \"dst_port_max\": 443, \"dst_port_min\": 10, \"vlan_max\": 10, \"vlan_min\": 1 } ], \"name\": \"test_device\", \"description\": \"test_desc\", \"extrahop_id\": \"test_eid\" }"
                     ]
-
                 },
                 {
                     "data_path": "action_result.parameter.name",
@@ -1702,6 +1701,409 @@
             ],
             "render": {
                 "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get metrics",
+            "identifier": "get_metrics",
+            "description": "Retrieve the metrics data",
+            "verbose": "This action will retrieve the details of the metric based on the given inputs. If 'json_object' parameter is provided, it will be prioritized and rest of the parameters will be ignored.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "json_object": {
+                    "description": "JSON object for get metrics action",
+                    "data_type": "string",
+                    "order": 0
+                },
+                "metric_cycle_length": {
+                    "description": "Aggregation time interval for retrieved metrics",
+                    "data_type": "string",
+                    "order": 2,
+                    "value_list": [
+                        "auto",
+                        "30sec",
+                        "5min",
+                        "1hr"
+                    ],
+                    "default": "auto"
+                },
+                "minutes": {
+                    "description": "Amount of lookback data (default is 30 mins)",
+                    "data_type": "numeric",
+                    "order": 1,
+                    "default": 30
+                },
+                "object_type": {
+                    "description": "Object type associated with the API IDs",
+                    "data_type": "string",
+                    "order": 3,
+                    "value_list": [
+                        "Application",
+                        "Device Group",
+                        "Device Group Summary",
+                        "Device",
+                        "Network"
+                    ],
+                    "default": "Application"
+                },
+                "object_id": {
+                    "description": "API IDs for the objects(Comma-delimited)",
+                    "data_type": "string",
+                    "order": 4,
+                    "primary": true,
+                    "contains": [
+                        "extrahop api id"
+                    ]
+                },
+                "metric_category": {
+                    "description": "Category of metrics to retrieve. (See REST API Parameters in the ExtraHop Metric Catalog to find categories)",
+                    "data_type": "string",
+                    "order": 5
+                },
+                "metric_name": {
+                    "description": "Names of metrics to retrieve. (Comma-delimited; see REST API Parameters in the ExtraHop Metric Catalog to find metric names)",
+                    "data_type": "string",
+                    "order": 6
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.json_object",
+                    "data_type": "string",
+                    "example_values": [
+                        "{\"cycle\": \"30sec\", \"from\": 1661624490000, \"until\": 1661628090000, \"metric_category\": \"tcp_detail\", \"metric_specs\": [{\"name\": \"established\"}], \"object_ids\": [1994], \"object_type\": \"device\"}"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.metric_category",
+                    "data_type": "string",
+                    "example_values": [
+                        "tcp_detail"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.metric_cycle_length",
+                    "data_type": "string",
+                    "example_values": [
+                        "30sec"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.metric_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "established"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.minutes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        30
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.object_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1994"
+                    ],
+                    "contains": [
+                        "extrahop api id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.object_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "Device"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.cycle",
+                    "data_type": "string",
+                    "example_values": [
+                        "30sec"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.detail",
+                    "data_type": "string",
+                    "column_order": 5,
+                    "column_name": "Detail",
+                    "example_values": [
+                        "10.10.10.10"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.metric_category",
+                    "data_type": "string",
+                    "example_values": [
+                        "tcp_detail"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.object_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "Device"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.oid",
+                    "data_type": "string",
+                    "example_values": [
+                        "1994"
+                    ],
+                    "contains": [
+                        "extrahop api id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.time",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1664736060
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully received metrics data"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "width": 12,
+                "height": 5,
+                "type": "custom",
+                "title": "Get Metrics",
+                "view": "extrahop_view.display_view"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get packets",
+            "identifier": "get_packets",
+            "description": "Retrieve the packets data",
+            "verbose": "This action will retrieve the packets in the form of a pcap file and stored it into the vault. If 'json_object' parameter is provided, it will be prioritized and rest of the parameters will be ignored.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "json_object": {
+                    "description": "JSON object for get packets action",
+                    "data_type": "string",
+                    "order": 0
+                },
+                "minutes": {
+                    "description": "Amount of lookback data (default is 30 mins)",
+                    "data_type": "numeric",
+                    "order": 1,
+                    "default": 30
+                },
+                "bpf": {
+                    "description": "Berkeley Packet Filter (BPF) syntax for packet retrieval",
+                    "data_type": "string",
+                    "order": 2
+                },
+                "limit_bytes": {
+                    "description": "Maximum number of return bytes for packet retrieval",
+                    "data_type": "string",
+                    "order": 3
+                },
+                "limit_search_duration": {
+                    "description": "Maximum runtime for packet retrieval. The default unit is milliseconds, but other units can be specified with a unit suffix.",
+                    "data_type": "string",
+                    "order": 4
+                },
+                "ip1": {
+                    "description": "Retrieve packets sent to or received by this IP address",
+                    "data_type": "string",
+                    "order": 5,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                "ip2": {
+                    "description": "Retrieve packets sent to or received by this additional IP address",
+                    "data_type": "string",
+                    "order": 6,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                "port1": {
+                    "description": "Retrieve packets sent to or received by this port number",
+                    "data_type": "numeric",
+                    "order": 7
+                },
+                "port2": {
+                    "description": "Retrieve packets sent to or received by this additional port number",
+                    "data_type": "numeric",
+                    "order": 8
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.bpf",
+                    "data_type": "string",
+                    "example_values": [
+                        "src host 10.10.10.10 and dst port 443"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip1",
+                    "data_type": "string",
+                    "example_values": [
+                        "10.10.10.10"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip2",
+                    "data_type": "string",
+                    "example_values": [
+                        "10.10.10.11"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.json_object",
+                    "data_type": "string",
+                    "example_values": [
+                        "{ \"from\": 1654340066000, \"limit_bytes\": \"200MB\", \"bpf\": \"src host 10.10.10.10 and dst port 443\", \"ip1\": \"10.10.10.11\", \"port1\": 22 }"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.limit_bytes",
+                    "data_type": "string",
+                    "example_values": [
+                        "100MB"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.limit_search_duration",
+                    "data_type": "string",
+                    "example_values": [
+                        "5m"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.minutes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        30
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.port1",
+                    "data_type": "numeric",
+                    "example_values": [
+                        "443"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.port2",
+                    "data_type": "numeric",
+                    "example_values": [
+                        "443"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.file_name",
+                    "data_type": "string",
+                    "column_order": 0,
+                    "column_name": "File name",
+                    "example_values": [
+                        "extrahop 2022-09-30 11.13.16 to 11.18.16 IST.pcap"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.vault_id",
+                    "data_type": "string",
+                    "column_order": 1,
+                    "column_name": "Vault ID",
+                    "contains": [
+                        "vault id"
+                    ],
+                    "example_values": [
+                        "b0a83ea208b4cd125e5296cfb06053d740a5f444"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Successfully added packets"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "width": 12,
+                "height": 5,
+                "type": "table",
+                "title": "Get Packets"
             },
             "versions": "EQ(*)"
         },
