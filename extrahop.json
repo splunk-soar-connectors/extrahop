@@ -1717,6 +1717,12 @@
                     "data_type": "string",
                     "order": 0
                 },
+                "minutes": {
+                    "description": "Amount of lookback data (default is 30 mins)",
+                    "data_type": "numeric",
+                    "order": 1,
+                    "default": 30
+                },
                 "metric_cycle_length": {
                     "description": "Aggregation time interval for retrieved metrics",
                     "data_type": "string",
@@ -1728,12 +1734,6 @@
                         "1hr"
                     ],
                     "default": "auto"
-                },
-                "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
-                    "data_type": "numeric",
-                    "order": 1,
-                    "default": 30
                 },
                 "object_type": {
                     "description": "Object type associated with the API IDs",
@@ -1839,8 +1839,6 @@
                 {
                     "data_path": "action_result.data.*.detail",
                     "data_type": "string",
-                    "column_order": 5,
-                    "column_name": "Detail",
                     "example_values": [
                         "10.10.10.10"
                     ]
