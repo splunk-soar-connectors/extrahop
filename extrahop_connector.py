@@ -1615,11 +1615,13 @@ class ExtrahopConnector(BaseConnector):
         processed_params["metric_cycle_length"] = param.get("metric_cycle_length", "30sec")
         if processed_params["metric_cycle_length"] not in EXTRHOP_CYCLE_SELECTION:
             return action_result.set_status(
-                phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION.format(processed_params["metric_cycle_length"], EXTRHOP_CYCLE_SELECTION)), processed_params
+                phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION.format(processed_params["metric_cycle_length"],
+                                                                     EXTRHOP_CYCLE_SELECTION)), processed_params
 
         object_type = param.get("object_type", "Application")
         if object_type not in EXTRHOP_METRIC_OBJECT_TYPE:
-            return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION.format(object_type, EXTRHOP_METRIC_OBJECT_TYPE)), processed_params
+            return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION
+                                            .format(object_type, EXTRHOP_METRIC_OBJECT_TYPE)), processed_params
         processed_params["object_type"] = EXTRAHOP_OBJECT_TYPE.get(object_type)
 
         object_id = param.get("object_id")
@@ -1633,7 +1635,8 @@ class ExtrahopConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_METRIC_REQUIRED_PARAM), processed_params
         processed_params["object_id"] = object_id
 
-        if self._is_on_poll and self._is_poll_now and "Device Group" not in object_type and param.get("container_count") < len(processed_params["object_id"]):
+        if self._is_on_poll and self._is_poll_now and "Device Group" not in object_type \
+                and param.get("container_count") < len(processed_params["object_id"]):
             return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_CONTAINER_LIMIT_ERR), processed_params
 
         metric_category = param.get("metric_category")
@@ -2019,7 +2022,8 @@ class ExtrahopConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, message), None
             except Exception as e:
                 return RetVal(action_result.set_status(
-                    phantom.APP_ERROR, "Unable to store file in Phantom Vault. Error: {0}".format(self._get_error_message_from_exception(e))), None)
+                    phantom.APP_ERROR, "Unable to store file in Phantom Vault. Error: {0}"
+                    .format(self._get_error_message_from_exception(e))), None)
             return phantom.APP_SUCCESS, vault_id
 
         return phantom.APP_SUCCESS, packets
@@ -2201,7 +2205,8 @@ class ExtrahopConnector(BaseConnector):
         state_access_token = self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING, {}).get(EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING)
         if state_access_token and self._state.get(EXTRAHOP_OAUTH_ACCESS_TOKEN_IS_ENCRYPTED, False):
             try:
-                return encryption_helper.decrypt(self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING).get(EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING), self._asset_id)
+                return encryption_helper.decrypt(self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING)
+                                                 .get(EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING), self._asset_id)
             except Exception as ex:
                 self.debug_print("{}: {}".format(EXTRAHOP_DECRYPTION_ERR, self._get_error_message_from_exception(ex)))
         return None
