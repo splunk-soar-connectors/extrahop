@@ -12,21 +12,22 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
+import copy
 import ipaddress
 import json
+import math
 import os
 import time
-import copy
-import math
 import uuid
+
 import encryption_helper
 import phantom.app as phantom
 import phantom.rules as phantom_rules
-from phantom.vault import Vault
 import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from phantom.vault import Vault
 
 from extrahop_consts import *
 
