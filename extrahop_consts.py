@@ -17,25 +17,25 @@
 EXTRAHOP_OAUTH_TOKEN_STRING = "token"
 EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING = "access_token"
 EXTRAHOP_OAUTH_ACCESS_TOKEN_IS_ENCRYPTED = "is_encrypted"
-EXTRAHOP_DECRYPTION_ERR = "Error occurred while decrypting the state file"
-EXTRAHOP_ENCRYPTION_ERR = "Error occurred while encrypting the state file"
+EXTRAHOP_DECRYPTION_ERROR = "Error occurred while decrypting the state file"
+EXTRAHOP_ENCRYPTION_ERROR = "Error occurred while encrypting the state file"
 EXTRAHOP_DETECTION_LAST_INGESTED_TIME = "detection_last_ingested_time"
 EXTRAHOP_METRICS_LAST_INGESTED_TIME = "metrics_last_ingested_time"
 EXTRAHOP_PACKETS_LAST_INGESTED_TIME = "packets_last_ingested_time"
 
 # Error and status messages
-EXTRAHOP_ERR_MSG_UNAVAILABLE = 'Error message unavailable. Please check the asset configuration and|or action parameters'
+EXTRAHOP_ERROR_MESSAGE_UNAVAILABLE = 'Error message unavailable. Please check the asset configuration and|or action parameters'
 EXTRAHOP_DEBUG_REST_ENDPOINT = "Making REST call to {}"
-EXTRAHOP_STATE_FILE_CORRUPT_ERR = "Error occurred while loading the state file due to its unexpected format. " \
+EXTRAHOP_STATE_FILE_CORRUPT_ERROR = "Error occurred while loading the state file due to its unexpected format. " \
     "Resetting the state file with the default format."
-EXTRAHOP_CONTAINER_LIMIT_ERR = "Container count should be greater than or equal to the number of object_ids"
+EXTRAHOP_CONTAINER_LIMIT_ERROR = "Container count should be greater than or equal to the number of object_ids"
 EXTRAHOP_METRIC_REQUIRED_PARAM = "Required parameters: metric_cycle_length, object_type, object_id, metric_category and metric_name"
 EXTRAHOP_METRIC_REQUIRED_API_PARAM = "API required parameters: cycle, object_type, object_ids, metric_category and metric_specs"
-EXTRAHOP_METRIC_NOT_NEEDED_MSG = "For asset_id: {}, Interval should be in multiple of cycle length"
+EXTRAHOP_METRIC_NOT_NEEDED_MESSAGE = "For asset_id: {}, Interval should be in multiple of cycle length"
 EXTRAHOP_DEFAULT_ERROR = "Error : {}"
-EXTRAHOP_CORRUPTED_KEY_MSG = "Corrupted key {}"
-EXTRHOP_CONTAINER_ERROR_MSG = "Error occurred while saving the container: ID {}: {}"
-EXTRHOP_ARTIFACT_ERROR_MSG = "Error occurred while saving the artifact(s): {}"
+EXTRAHOP_CORRUPTED_KEY_MESSAGE = "Corrupted key {}"
+EXTRHOP_CONTAINER_ERROR_MESSAGE = "Error occurred while saving the container: ID {}: {}"
+EXTRHOP_ARTIFACT_ERROR_MESSAGE = "Error occurred while saving the artifact(s): {}"
 
 # Endpoints
 EXTRAHOP_TOKEN_ENDPOINT = '/oauth2/token'
@@ -62,15 +62,15 @@ EXTRAHOP_PACKETS_DEFAULT_INTERVAL = 3600
 # Constant values
 EXTRAHOP_INSTANCE_CLOUD = 'Reveal(x) 360'
 EXTRAHOP_INSTANCE_ON_PREM = 'Reveal(x) Enterprise'
-EXTRAHOP_INVALID_CLIENT_MSG = 'Status Code: 400 Data from server: {"error":"invalid_client"}'
-EXTRAHOP_INVALID_EXPIRED_MSG = 'Status Code: 400 Data from server: invalid'
-EXTRAHOP_INVALID_EXPIRED_2_MSG = 'Status Code: 401 Data from server: {"error_message":"Invalid access token"}'
-EXTRAHOP_ACTION_HANDLER_MSG = 'In action handler for: {0}'
-EXTRAHOP_INVALID_FILTER_MSG = 'Unable to parse JSON for \'{}\' parameter'
-EXTRAHOP_RETRIEVING_DATA_MSG = 'Retrieving {} from Extrahop'
-EXTRAHOP_INGESTION_MSG = "{} id ({}) is ingested in container id ({})"
-EXTRAHOP_INGESTION_START_MSG = "Ingesting the data"
-EXTRAHOP_DUPLICATE_CONTAINER_MSG = "Duplicate container found"
+EXTRAHOP_INVALID_CLIENT_MESSAGE = 'Status Code: 400 Data from server: {"error":"invalid_client"}'
+EXTRAHOP_INVALID_EXPIRED_MESSAGE = 'Status Code: 400 Data from server: invalid'
+EXTRAHOP_INVALID_EXPIRED_2_MESSAGE = 'Status Code: 401 Data from server: {"error_message":"Invalid access token"}'
+EXTRAHOP_ACTION_HANDLER_MESSAGE = 'In action handler for: {0}'
+EXTRAHOP_INVALID_FILTER_MESSAGE = 'Unable to parse JSON for \'{}\' parameter'
+EXTRAHOP_RETRIEVING_DATA_MESSAGE = 'Retrieving {} from Extrahop'
+EXTRAHOP_INGESTION_MESSAGE = "{} id ({}) is ingested in container id ({})"
+EXTRAHOP_INGESTION_START_MESSAGE = "Ingesting the data"
+EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE = "Duplicate container found"
 
 # Validation for value_list
 EXTRAHOP_PEER_ROLE_LIST = ["client", "server", "any"]
@@ -87,10 +87,10 @@ EXTRAHOP_INVALID_SELECTION = "Invalid '{0}' selected. Must be one of: {1}."
 EXTRAHOP_INVALID_STATUS = "Invalid '{0}'. Must be one of: {1}."
 
 # Constants relating to 'validate_integer'
-EXTRAHOP_VALID_INT_MSG = "Please provide a valid integer value in the '{param}'"
-EXTRAHOP_NON_NEG_NON_ZERO_INT_MSG = "Please provide a valid non-zero positive integer value in '{param}'"
-EXTRAHOP_NON_NEG_INT_MSG = "Please provide a valid non-negative integer value in the '{param}'"
-EXTRAHOP_PARAM_VALIDATION_MSG = "Validating the parameters"
+EXTRAHOP_VALID_INT_MESSAGE = "Please provide a valid integer value in the '{param}'"
+EXTRAHOP_NON_NEG_NON_ZERO_INT_MESSAGE = "Please provide a valid non-zero positive integer value in '{param}'"
+EXTRAHOP_NON_NEG_INT_MESSAGE = "Please provide a valid non-negative integer value in the '{param}'"
+EXTRAHOP_PARAM_VALIDATION_MESSAGE = "Validating the parameters"
 
 EXTRAHOP_EH_API_ID_KEY = "eh_api_id"
 EXTRAHOP_MINUTES_KEY = "minutes"
