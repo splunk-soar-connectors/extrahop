@@ -138,7 +138,7 @@
             "order": 16
         },
         "limit_search_duration": {
-            "description": "Maximum runtime for packet retrieval",
+            "description": "Maximum runtime for packet retrieval. The default unit is milliseconds, but other units can be specified with a unit suffix.",
             "data_type": "string",
             "order": 17
         },
@@ -553,7 +553,7 @@
                     "order": 0
                 },
                 "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
+                    "description": "Amount of lookback data in minutes (default is 30 mins)",
                     "data_type": "numeric",
                     "default": 30,
                     "order": 1
@@ -881,7 +881,7 @@
         {
             "action": "get protocols",
             "identifier": "get_protocols",
-            "description": "Retrieve a list of protools observed on a device",
+            "description": "Retrieve a list of protocols observed on a device",
             "verbose": "This action retrieves a list of all protocols that were observed to have communicated on a specified device within the last N minutes. Specify the device through either the 'ip' or 'eh_api_id' parameter. If both parameters are provided, 'eh_api_id' is the default.",
             "type": "investigate",
             "read_only": true,
@@ -896,7 +896,7 @@
                     "order": 0
                 },
                 "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
+                    "description": "Amount of lookback data in minutes (default is 30 mins)",
                     "data_type": "numeric",
                     "default": 30,
                     "order": 1
@@ -1033,7 +1033,7 @@
                     "order": 1
                 },
                 "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
+                    "description": "Amount of lookback data in minutes (default is 30 mins)",
                     "data_type": "numeric",
                     "default": 30,
                     "order": 2
@@ -1718,7 +1718,7 @@
                     "order": 0
                 },
                 "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
+                    "description": "Amount of lookback data in minutes (default is 30 mins)",
                     "data_type": "numeric",
                     "order": 1,
                     "default": 30
@@ -1749,7 +1749,7 @@
                     "default": "Application"
                 },
                 "object_id": {
-                    "description": "API IDs for the objects(Comma-delimited)",
+                    "description": "API IDs for the objects (Comma-delimited)",
                     "data_type": "string",
                     "order": 4,
                     "primary": true,
@@ -1923,7 +1923,7 @@
                     "order": 0
                 },
                 "minutes": {
-                    "description": "Amount of lookback data (default is 30 mins)",
+                    "description": "Amount of lookback data in minutes (default is 30 mins)",
                     "data_type": "numeric",
                     "order": 1,
                     "default": 30
