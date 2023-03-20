@@ -1,7 +1,7 @@
 [comment]: # "Auto-generated SOAR connector documentation"
 # ExtraHop Reveal(x)
 
-Publisher: Splunk  
+Publisher: ExtraHop  
 Connector Version: 3.0.0  
 Product Vendor: ExtraHop Networks  
 Product Name: ExtraHop Reveal(x)  
@@ -11,7 +11,7 @@ Minimum Product Version: 5.5.0
 This app integrates with your ExtraHop system to gain insight into devices, traffic, and detections in your environment
 
 [comment]: # "File: README.md"
-[comment]: # "Copyright (c) 2018-2023 Splunk Inc."
+[comment]: # "Copyright (c) 2018-2023 ExtraHop"
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
