@@ -1,6 +1,6 @@
 # File: extrahop_connector.py
 #
-# Copyright (c) 2018-2023 Splunk Inc.
+# Copyright (c) 2018-2023 ExtraHop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,25 +13,24 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 import copy
+import hashlib
 import ipaddress
 import json
 import math
 import os
+import re
 import time
 import uuid
-import re
 
 import encryption_helper
 import phantom.app as phantom
 import phantom.rules as phantom_rules
-from phantom_common import install_info
-
 import requests
-import hashlib
 from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
+from phantom_common import install_info
 
 from extrahop_consts import *
 
