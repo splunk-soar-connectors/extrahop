@@ -1,6 +1,6 @@
 # File: extrahop_connector.py
 #
-# Copyright (c) 2018-2022 Splunk Inc.
+# Copyright (c) 2018-2023 ExtraHop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 import copy
+import hashlib
 import ipaddress
 import json
 import math
 import os
+import re
 import time
 import uuid
 
@@ -24,10 +26,11 @@ import encryption_helper
 import phantom.app as phantom
 import phantom.rules as phantom_rules
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
+from phantom_common import install_info
 
 from extrahop_consts import *
 
@@ -51,6 +54,7 @@ class ExtrahopConnector(BaseConnector):
         self._state = None
         self._access_token = None
         self._base_url = None
+        self._platform_url = None
         self._instance_type = None
         self._client_id = None
         self._client_secret = None
@@ -74,6 +78,7 @@ class ExtrahopConnector(BaseConnector):
         error_code = None
         error_message = EXTRAHOP_ERROR_MESSAGE_UNAVAILABLE
 
+        self.error_print("Error occurred.", e)
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
@@ -82,7 +87,7 @@ class ExtrahopConnector(BaseConnector):
                 elif len(e.args) == 1:
                     error_message = e.args[0]
         except Exception as e:
-            self.debug_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
+            self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
         if not error_code:
             error_text = "Error Message: {}".format(error_message)
@@ -979,7 +984,7 @@ class ExtrahopConnector(BaseConnector):
 
         ret_val, metrics = self._process_metrics(param, action_result)
         if phantom.is_fail(ret_val):
-            self.debug_print("Error : {}".format(action_result.get_message()))
+            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
             return action_result.get_status()
 
         message = "Successfully received metrics data"
@@ -1007,6 +1012,90 @@ class ExtrahopConnector(BaseConnector):
 
         return container
 
+    def _choose_severity(self, data):
+        if not data.get("risk_score"):
+            return "low"
+        else:
+            risk_score = data.get("risk_score")
+            if risk_score > 80:
+                return "high"
+            elif risk_score > 30:
+                return "medium"
+            else:
+                return "low"
+
+    def _add_markdown(self, data, container_id, artifact_id):
+        """Add note to the container."""
+        description = data.get("description")
+        title = data.get("title")
+        if self._platform_url:
+            new_link = "{}/extrahop/#".format(self._platform_url)
+
+            markdown_data = re.findall(EXTRAHOP_MARKDOWN_REGEX, description)
+
+            for markdown in markdown_data:
+                # Replacing the '#' to the extrahop platform url
+                new_markdown = markdown.replace("#", new_link)
+                description = description.replace(markdown, new_markdown)
+
+        ret_val, message, _ = phantom_rules.add_note(
+            container=container_id,
+            artifact_id=artifact_id,
+            title=title,
+            content=description,
+            note_type="general",
+            note_format="markdown"
+        )
+
+        if phantom.is_fail(ret_val):
+            self.debug_print("Error occurred while adding the note: {}".format(message))
+
+    def _create_hash(self, data):
+
+        input_dict_str = None
+
+        if not data:
+            return None
+
+        try:
+            input_dict_str = json.dumps(data, sort_keys=True)
+        except Exception as e:
+            error_message = self._get_error_message_from_exception(e)
+            self.debug_print('Error occurred in _create_hash. {0}'.format(error_message))
+            return None
+
+        return hashlib.sha256(UnicodeDammit(input_dict_str).unicode_markup.encode('utf-8')).hexdigest()
+
+    def _make_rest_call_to_soar(self, endpoint, method="get", soar_data=""):
+        """Get the artifact data."""
+        soar_baseurl = install_info.get_rest_base_url().rstrip("/")
+        url = "{}{}".format(soar_baseurl, endpoint)
+        request_func = getattr(requests, method)
+        try:
+            resp = request_func(url, verify=EXTRAHOP_VERIFY_SERVER_FAIL)
+        except Exception as e:
+            error_message = self._get_error_message_from_exception(e)
+            self.debug_print("Error connecting to server. Details: {0}".format(error_message))
+        else:
+            try:
+                soar_data = json.loads(resp.text)
+            except Exception as e:
+                error_message = self._get_error_message_from_exception(e)
+                self.debug_print("Error while parsing the response. {}".format(error_message))
+
+        return soar_data
+
+    def _modify_description(self, updated_description):
+        markdown_data = re.findall(EXTRAHOP_MARKDOWN_REGEX, updated_description)
+
+        for markdown in markdown_data:
+            # Discarded the fields after '?' in markdown as the timestamps
+            # for from and until is changing frequently. which cause the
+            # artifact duplication (only timestamp is changing)
+            new_markdown = markdown.split("?")
+            updated_description = updated_description.replace(markdown, new_markdown[0])
+        return updated_description
+
     def _ingest_detection(self, action_result, data_list, param, data_type):
         """
         Ingest data into Phantom.
@@ -1022,33 +1111,84 @@ class ExtrahopConnector(BaseConnector):
 
         for data in data_list:
             artifacts = []
+            data = self._update_object_participants(action_result, data)
             data_id = data.get("id")
             artifact_name = "{} Artifact".format(data.get("title"))
 
             container = self._add_container_data(data, data_type)
 
+            severity_level = self._choose_severity(data)
+            container["severity"] = severity_level
             status, message, container_id = self.save_container(container)
             if phantom.is_fail(status):
                 self.debug_print(EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
                 continue
 
+            artifact_info = None
+            if self._platform_url:
+                extrahop_link = "{}/extrahop/#/detections/detail/{}".format(self._platform_url, data_id)
+                data["extrahop_link"] = extrahop_link
+
             if EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE in message:
                 self.debug_print(EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE)
+                artifact_info = self._make_rest_call_to_soar(EXTRAHOP_SOAR_ARTIFACT_ENDPOINT.format(container_id), soar_data=artifact_info)
+
+            old_sdi = ""
+            old_description = ""
+            mod_time = None
+            if artifact_info and artifact_info.get("data"):
+                # taking the source_data_identifier of latest artifact
+                old_sdi = artifact_info.get("data")[0].get("source_data_identifier")
+                old_description = artifact_info.get("data")[0].get("cef", "").get("description", "")
+            if data.get("update_time"):
+                update_time = data.pop("update_time")
+            if data.get("mod_time"):
+                mod_time = data.pop("mod_time")
+            description = data.pop("description")
+            if description is None:
+                description = ""
+            updated_description = description
+            updated_description = self._modify_description(updated_description)
+            old_updated_description = self._modify_description(old_description)
+
+            data["description"] = updated_description
+            sdi = self._create_hash(data)
+            if old_sdi == sdi:
+                self.debug_print(EXTRAHOP_ARTIFACT_SAME_SDI.format(sdi, container_id))
+                continue
+
+            data.update({
+                "description": description,
+                "update_time": update_time
+            })
+            if mod_time:
+                data["mod_time"] = mod_time
 
             # construct artifacts
             artifacts = [{
+                "source_data_identifier": sdi,
                 "label": param.get("label"),
                 "name": artifact_name,
                 "cef": data,
-                "container_id": container_id
+                "container_id": container_id,
+                "severity": severity_level
             }]
 
-            status, message, _ = self.save_artifacts(artifacts)
+            if not self._platform_url and self._instance_type == EXTRAHOP_INSTANCE_CLOUD:
+                self.debug_print("Please specify the platform URL in the asset configuration to add 'extrahop_link' in the detection artifact")
+
+            status, message, artifact_id = self.save_artifacts(artifacts)
             if phantom.is_fail(status):
                 self.debug_print(EXTRHOP_ARTIFACT_ERROR_MESSAGE.format(message))
                 continue
 
-            self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(data_type, data_id, container_id))
+            if not data.get("description"):
+                continue
+
+            if updated_description != old_updated_description:
+                self._add_markdown(data, container_id, artifact_id)
+
+        self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(data_type, data_id, container_id))
 
         return phantom.APP_SUCCESS
 
@@ -1082,6 +1222,23 @@ class ExtrahopConnector(BaseConnector):
 
         return phantom.APP_SUCCESS, processed_params
 
+    def _update_object_participants(self, action_result, data):
+        """Modify the participants information."""
+        for index, participant in enumerate(data["participants"]):
+            all_keys = participant.keys()
+            if EXTRAHOP_DETECTION_OBJECT_VALUE not in all_keys and EXTRAHOP_DETECTION_OBJECT_ID in all_keys:
+                ret_val, response = self._make_rest_call(EXTRAHOP_DEVICE_WITH_ID_ENDPOINT.format(participant.get("object_id")), action_result)
+                if phantom.is_fail(ret_val):
+                    self.debug_print("Not able to find the object value for the device with {} ID".format(participant.get("object_id")))
+                    continue
+                if response.get("ipaddr4"):
+                    data["participants"][index]["object_value"] = response.get("ipaddr4")
+                elif response.get("ipaddr6"):
+                    data["participants"][index]["object_value"] = response.get("ipaddr6")
+                else:
+                    data["participants"][index]["object_value"] = None
+        return data
+
     def _process_detections(self, param, action_result):
         """
         Process the detections.
@@ -1111,14 +1268,13 @@ class ExtrahopConnector(BaseConnector):
             detection_status = processed_params.get("detection_status")
             detection_category = processed_params.get("detection_category")
         limit = param.get("container_count")
-        start_time = param.get("start_time")
+        mod_time = param.get("mod_time")
 
         self.save_progress(EXTRAHOP_RETRIEVING_DATA_MESSAGE.format("detections"))
         self.debug_print(EXTRAHOP_RETRIEVING_DATA_MESSAGE.format("detections"))
 
         data.update({
-            "from": start_time,
-            "until": 0,
+            "mod_time": mod_time
         })
         if not is_json_object:
             data["filter"] = dict()
@@ -1150,11 +1306,11 @@ class ExtrahopConnector(BaseConnector):
         """
         now = int(time.time()) * 1000
         if self._is_poll_now:
-            params["start_time"] = now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000)
+            params["mod_time"] = now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000)
         else:
-            params["start_time"] = self._state.get(EXTRAHOP_DETECTION_LAST_INGESTED_TIME, now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000))
+            params["mod_time"] = self._state.get(EXTRAHOP_DETECTION_LAST_INGESTED_TIME, now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000))
 
-        if isinstance(params["start_time"], int):
+        if isinstance(params["mod_time"], int):
             for key in EXTRAHOP_INGESTION_DETECTION_KEYS:
                 params[key] = config.get(key)
             for key, value in list(params.items()):
@@ -1385,7 +1541,7 @@ class ExtrahopConnector(BaseConnector):
             for _ in range(num_results):
                 ret_val, metrics_response = self._make_rest_call(EXTRAHOP_METRICS_XID_ENDPOINT.format(xid), action_result)
                 if phantom.is_fail(ret_val):
-                    self.debug_print("Error : {}".format(action_result.get_message()))
+                    self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
                     continue
                 if metrics_response["stats"][0]["values"][0]:
                     break
@@ -1876,7 +2032,7 @@ class ExtrahopConnector(BaseConnector):
 
         ret_val, vault_id = self._process_packets(param, action_result)
         if phantom.is_fail(ret_val):
-            self.debug_print("Error : {}".format(action_result.get_message()))
+            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
             return action_result.get_status()
 
         vault_id = vault_id if vault_id else None
@@ -2174,6 +2330,11 @@ class ExtrahopConnector(BaseConnector):
         self._asset_id = self.get_asset_id()
         self.set_validator('ip', self._validate_ip)
         self._instance_type = config['instance_type']
+
+        if self._instance_type == EXTRAHOP_INSTANCE_ON_PREM:
+            self._platform_url = self._base_url
+        else:
+            self._platform_url = config.get('platform_url', '').strip('/')
 
         self._api_key = config.get('api_key')
         if self._instance_type == EXTRAHOP_INSTANCE_ON_PREM and not self._api_key:
