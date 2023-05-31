@@ -2,11 +2,11 @@
 # ExtraHop Reveal(x)
 
 Publisher: ExtraHop  
-Connector Version: 3.0.0  
+Connector Version: 3.1.0  
 Product Vendor: ExtraHop Networks  
 Product Name: ExtraHop Reveal(x)  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.5.0  
+Minimum Product Version: 6.0.0  
 
 This app integrates with your ExtraHop system to gain insight into devices, traffic, and detections in your environment
 
@@ -26,8 +26,11 @@ This app integrates with your ExtraHop system to gain insight into devices, traf
 [comment]: # ""
 # App Backward Compatibility
 
-This app is not backward compatible with extrahop appliance versions below 9.1.2. Version 9.1.2 or
+This app is not backward compatible with extrahop appliance versions below 9.3.0. Version 9.3.0 or
 higher is recommended.
+
+The multiple category support is only compatible with ExtraHop appliance version greater or equal to
+9.3.0.
 
 # Integrate ExtraHop Reveal(x)
 
@@ -91,11 +94,13 @@ ExtraHop Reveal(x) and to configure the type of ExtraHop data you want to poll.
 For detection, while manual polling and in the **first run** of scheduled/interval polling, it will
 retrieve the data from the past 1 hour.
 
--   **Detection category:** Specify the category of detections you want to retrieve. If left blank,
-    the poll retrieves detections from all categories. The following are the valid values that the
-    parameter can take:
+-   **Detection category:** Specify the category of detections you want to retrieve. Specify a
+    comma-delimited list to poll for more than one categories. If left blank, the poll retrieves
+    detections of **sec.attack** category. The following are the valid values that the parameter can
+    take:
     -   sec
     -   sec.action
+    -   sec.attack
     -   sec.botnet
     -   sec.caution
     -   sec.command
@@ -134,6 +139,11 @@ retrieve the data from the past 1 hour.
 
 -   Based on the description provided in detection, a Splunk SOAR note will be added. It will only
     be added again if the description is updated apart from the timestamp field.
+
+-   **Note:**
+
+    Default detection category will be considered as "sec.attack" in 'json_object' and
+    'detection_category' configuration parameters
 
 ## **Metric settings** 
 
@@ -233,7 +243,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **client_secret** |  optional  | password | Client secret (Reveal(x) 360 only)
 **ingestion_type** |  optional  | string | Type of data to retrieve and ingest
 **json_object** |  optional  | string | JSON object for on poll action
-**detection_category** |  optional  | string | Category of detections to retrieve. (Leave blank to retrieve detections in any category)
+**detection_category** |  optional  | string | Category of detections to retrieve. (Default detection category: 'sec.attack')
 **detection_status** |  optional  | string | Status of detections to retrieve. (Comma-delimited; leave blank to retrieve detections of any status)
 **metric_cycle_length** |  optional  | string | Aggregation time interval for retrieved metrics
 **object_type** |  optional  | string | Object type associated with the API IDs to poll for metrics
