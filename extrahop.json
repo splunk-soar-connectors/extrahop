@@ -10,18 +10,14 @@
     "product_version_regex": ".*",
     "publisher": "ExtraHop",
     "license": "Copyright (c) 2018-2023 ExtraHop",
-    "app_version": "3.0.0",
+    "app_version": "3.1.0",
     "utctime_updated": "2022-01-07T21:06:53.000000Z",
     "package_name": "phantom_extrahop",
     "python_version": "3",
     "main_module": "extrahop_connector.py",
-    "min_phantom_version": "5.5.0",
+    "min_phantom_version": "6.0.0",
     "app_wizard_version": "1.0.0",
     "fips_compliant": true,
-    "latest_tested_versions": [
-        "Reveal(x) Enterprise v9.1.2.1943",
-        "Reveal(x) 360 v9.1.1.1825"
-    ],
     "configuration": {
         "instance_type": {
             "description": "Type of asset",
@@ -87,9 +83,10 @@
             "order": 9
         },
         "detection_category": {
-            "description": "Category of detections to retrieve. (Leave blank to retrieve detections in any category)",
+            "description": "Category of detections to retrieve. (Default detection category: 'sec.attack')",
             "data_type": "string",
-            "order": 10
+            "order": 10,
+            "default": "sec.attack"
         },
         "detection_status": {
             "description": "Status of detections to retrieve. (Comma-delimited; leave blank to retrieve detections of any status)",
@@ -2150,28 +2147,20 @@
                 "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
-                "module": "certifi",
-                "input_file": "wheels/py3/certifi-2022.9.24-py3-none-any.whl"
-            },
+                "module": "soupsieve",
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
+            }
+        ]
+    },
+    "pip39_dependencies": {
+        "wheel": [
             {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+                "module": "beautifulsoup4",
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.12-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.4.1-py3-none-any.whl"
             }
         ]
     }

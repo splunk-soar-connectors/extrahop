@@ -87,12 +87,14 @@ class ExtrahopConnector(BaseConnector):
                 elif len(e.args) == 1:
                     error_message = e.args[0]
         except Exception as e:
-            self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
+            self.error_print(
+                "Error occurred while fetching exception information. Details: {}".format(str(e)))
 
         if not error_code:
             error_text = "Error Message: {}".format(error_message)
         else:
-            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
+            error_text = "Error Code: {}. Error Message: {}".format(
+                error_code, error_message)
 
         return error_text
 
@@ -138,7 +140,8 @@ class ExtrahopConnector(BaseConnector):
         eh_api_id = param.get('eh_api_id')
         active_from = param.get("minutes")
         if eh_api_id is not None:
-            ret_val, eh_api_id = self._validate_integer(action_result, eh_api_id, EXTRAHOP_EH_API_ID_KEY, True)
+            ret_val, eh_api_id = self._validate_integer(
+                action_result, eh_api_id, EXTRAHOP_EH_API_ID_KEY, True)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
             return RetVal(phantom.APP_SUCCESS, eh_api_id)
@@ -160,10 +163,12 @@ class ExtrahopConnector(BaseConnector):
         if active_from:
             data["active_from"] = active_from
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_DEVICES_ENDPOINT))
+        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+            EXTRAHOP_DEVICES_ENDPOINT))
 
         # make rest call to get the device
-        ret_val, get_devices_response = self._make_rest_call(EXTRAHOP_DEVICES_ENDPOINT, action_result, json=data, method="post")
+        ret_val, get_devices_response = self._make_rest_call(
+            EXTRAHOP_DEVICES_ENDPOINT, action_result, json=data, method="post")
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, reassemble RetVal and return
@@ -172,7 +177,8 @@ class ExtrahopConnector(BaseConnector):
         # Grab device ID from response
         # TODO how to handle more than one device being returned (currently will just take the first)
         if get_devices_response and get_devices_response[0] and 'id' in get_devices_response[0]:
-            ret_val, eh_api_id = self._validate_integer(action_result, get_devices_response[0]['id'], EXTRAHOP_EH_API_ID_KEY)
+            ret_val, eh_api_id = self._validate_integer(
+                action_result, get_devices_response[0]['id'], EXTRAHOP_EH_API_ID_KEY)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
             return RetVal(phantom.APP_SUCCESS, eh_api_id)
@@ -206,7 +212,8 @@ class ExtrahopConnector(BaseConnector):
         except Exception:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(
+            status_code, error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -253,7 +260,8 @@ class ExtrahopConnector(BaseConnector):
             return action_result.set_status(
                 phantom.APP_ERROR, "Unable to create temporary vault folder.", self._get_error_message_from_exception(e))
 
-        filename = self._response_headers["Content-Disposition"].split("filename=")[-1]
+        filename = self._response_headers["Content-Disposition"].split(
+            "filename=")[-1]
         filename = filename.replace("\"", "")
         file_path = "{}/{}".format(local_dir, filename)
         self.file_path = file_path
@@ -325,7 +333,8 @@ class ExtrahopConnector(BaseConnector):
 
         url = "{0}{1}".format(self._base_url, EXTRAHOP_TOKEN_ENDPOINT)
 
-        ret_val, resp_json = self._make_main_rest_call(url, action_result, data=data, method="post")
+        ret_val, resp_json = self._make_main_rest_call(
+            url, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -369,9 +378,11 @@ class ExtrahopConnector(BaseConnector):
             if 'annotations' in edge and 'protocols' in edge['annotations']:
                 for protocol_list in edge['annotations']['protocols']:
                     if edge["from"] == eh_api_id:
-                        unique_client_protocols.update(protocol_list['protocol'])
+                        unique_client_protocols.update(
+                            protocol_list['protocol'])
                     elif edge["to"] == eh_api_id:
-                        unique_server_protocols.update(protocol_list['protocol'])
+                        unique_server_protocols.update(
+                            protocol_list['protocol'])
 
         return unique_client_protocols, unique_server_protocols
 
@@ -385,7 +396,8 @@ class ExtrahopConnector(BaseConnector):
 
         headers['Authorization'] = 'Bearer {}'.format(self._access_token)
 
-        ret_val, resp_json = self._make_main_rest_call(url, action_result, headers, params, data, json, method)
+        ret_val, resp_json = self._make_main_rest_call(
+            url, action_result, headers, params, data, json, method)
 
         # If token is expired or invalid, generate a new token
         msg = action_result.get_message()
@@ -395,8 +407,10 @@ class ExtrahopConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
 
-            headers.update({'Authorization': "Bearer {}".format(self._access_token)})
-            ret_val, resp_json = self._make_main_rest_call(url, action_result, headers, params, data, json, method)
+            headers.update(
+                {'Authorization': "Bearer {}".format(self._access_token)})
+            ret_val, resp_json = self._make_main_rest_call(
+                url, action_result, headers, params, data, json, method)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
         elif phantom.is_fail(ret_val):
@@ -447,12 +461,15 @@ class ExtrahopConnector(BaseConnector):
 
         headers['Accept'] = 'application/json'
         if self._instance_type == EXTRAHOP_INSTANCE_CLOUD:
-            ret_val, resp_json = self._manage_cloud_rest_calls(url, action_result, headers, params, data, json, method)
+            ret_val, resp_json = self._manage_cloud_rest_calls(
+                url, action_result, headers, params, data, json, method)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
         else:
-            headers['Authorization'] = 'ExtraHop apikey={}'.format(self._api_key)
-            ret_val, resp_json = self._make_main_rest_call(url, action_result, headers, params, data, json, method)
+            headers['Authorization'] = 'ExtraHop apikey={}'.format(
+                self._api_key)
+            ret_val, resp_json = self._make_main_rest_call(
+                url, action_result, headers, params, data, json, method)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
 
@@ -475,7 +492,8 @@ class ExtrahopConnector(BaseConnector):
                 return action_result.get_status()
 
         # make rest call to get basic extrahop details
-        ret_val, _ = self._make_rest_call(EXTRAHOP_BASIC_DETAILS_ENDPOINT, action_result)
+        ret_val, _ = self._make_rest_call(
+            EXTRAHOP_BASIC_DETAILS_ENDPOINT, action_result)
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -490,7 +508,8 @@ class ExtrahopConnector(BaseConnector):
     def _handle_get_device(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -514,10 +533,12 @@ class ExtrahopConnector(BaseConnector):
 
             data["filter"]["operand"] = ip
 
-            self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_DEVICES_ENDPOINT))
+            self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+                EXTRAHOP_DEVICES_ENDPOINT))
 
             # make rest call to get list of devices
-            ret_val, get_devices_response = self._paginator(EXTRAHOP_DEVICES_ENDPOINT, action_result, data=data)
+            ret_val, get_devices_response = self._paginator(
+                EXTRAHOP_DEVICES_ENDPOINT, action_result, data=data)
             if phantom.is_fail(ret_val):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
                 # so just return from here
@@ -537,12 +558,14 @@ class ExtrahopConnector(BaseConnector):
     def _handle_get_peers(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ret_val, minutes = self._validate_integer(action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
+        ret_val, minutes = self._validate_integer(
+            action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -553,7 +576,8 @@ class ExtrahopConnector(BaseConnector):
         protocol = param.get('protocol', "any")
 
         # get extrahop api device id by ip address
-        ret_val, eh_api_id = self._get_extrahop_api_device_id(param, action_result)
+        ret_val, eh_api_id = self._get_extrahop_api_device_id(
+            param, action_result)
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -576,17 +600,20 @@ class ExtrahopConnector(BaseConnector):
             }]
         }
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_ACTIVITY_MAP_ENDPOINT))
+        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+            EXTRAHOP_ACTIVITY_MAP_ENDPOINT))
 
         # make rest call to get live activity map conversation data
-        ret_val, get_activitymap_response = self._make_rest_call(EXTRAHOP_ACTIVITY_MAP_ENDPOINT, action_result, json=body, method="post")
+        ret_val, get_activitymap_response = self._make_rest_call(
+            EXTRAHOP_ACTIVITY_MAP_ENDPOINT, action_result, json=body, method="post")
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # so just return from here
             return action_result.get_status()
 
-        unique_peer_ids = self.post_process_peers(get_activitymap_response, eh_api_id, peer_role)
+        unique_peer_ids = self.post_process_peers(
+            get_activitymap_response, eh_api_id, peer_role)
 
         # Lookup each EH device id
         for peer_id in unique_peer_ids:
@@ -596,7 +623,8 @@ class ExtrahopConnector(BaseConnector):
             self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(device_uri))
 
             # make rest call to get the device
-            ret_val, get_device_response = self._make_rest_call(device_uri, action_result)
+            ret_val, get_device_response = self._make_rest_call(
+                device_uri, action_result)
 
             if phantom.is_fail(ret_val):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -606,7 +634,8 @@ class ExtrahopConnector(BaseConnector):
             # Add device object to the results list
             if get_device_response:
                 # Add the peer into the data section
-                action_result.add_data(self._sanitize_object(get_device_response))
+                action_result.add_data(
+                    self._sanitize_object(get_device_response))
 
         # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
@@ -617,7 +646,8 @@ class ExtrahopConnector(BaseConnector):
     def _handle_get_protocols(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -625,12 +655,14 @@ class ExtrahopConnector(BaseConnector):
         # Access action parameters passed in the 'param' dictionary
         # Required values can be accessed directly
 
-        ret_val, minutes = self._validate_integer(action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
+        ret_val, minutes = self._validate_integer(
+            action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         # get extrahop api device id by ip address
-        ret_val, eh_api_id = self._get_extrahop_api_device_id(param, action_result)
+        ret_val, eh_api_id = self._get_extrahop_api_device_id(
+            param, action_result)
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -649,24 +681,29 @@ class ExtrahopConnector(BaseConnector):
             }]
         }
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_ACTIVITY_MAP_ENDPOINT))
+        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+            EXTRAHOP_ACTIVITY_MAP_ENDPOINT))
 
         # make rest call to get live activity map protocol data
-        ret_val, get_activitymap_response = self._make_rest_call(EXTRAHOP_ACTIVITY_MAP_ENDPOINT, action_result, json=body, method="post")
+        ret_val, get_activitymap_response = self._make_rest_call(
+            EXTRAHOP_ACTIVITY_MAP_ENDPOINT, action_result, json=body, method="post")
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # so just return from here
             return action_result.get_status()
 
-        unique_client_protocols, unique_server_protocols = self.post_process_protocols(get_activitymap_response, eh_api_id)
+        unique_client_protocols, unique_server_protocols = self.post_process_protocols(
+            get_activitymap_response, eh_api_id)
 
         # Clean up sets for presentation
         # TODO remove OTHER? does it have value?
         unique_client_protocols.discard('OTHER')
-        unique_client_protocols_str = ', '.join(sorted(unique_client_protocols))
+        unique_client_protocols_str = ', '.join(
+            sorted(unique_client_protocols))
         unique_server_protocols.discard('OTHER')
-        unique_server_protocols_str = ', '.join(sorted(unique_server_protocols))
+        unique_server_protocols_str = ', '.join(
+            sorted(unique_server_protocols))
 
         # Add the protocols into the data section
         action_result.add_data({
@@ -696,18 +733,22 @@ class ExtrahopConnector(BaseConnector):
         data["offset"] = offset
 
         while True:
-            self.debug_print(f"Fetching {data['limit']} records from offset {data['offset']}")
-            ret_val, response = self._make_rest_call(endpoint, action_result, json=data, method="post")
+            self.debug_print(
+                f"Fetching {data['limit']} records from offset {data['offset']}")
+            ret_val, response = self._make_rest_call(
+                endpoint, action_result, json=data, method="post")
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), None
 
             records_list.extend(response)
             if len(response) < EXTRAHOP_DEFAULT_LIMIT:
-                self.debug_print("Got all the available records, break the loop")
+                self.debug_print(
+                    "Got all the available records, break the loop")
                 break
 
             if ((action_id == "on_poll" and self._is_poll_now) or action_id != "on_poll") and len(records_list) >= limit:
-                self.debug_print("Got the required count, returning the result")
+                self.debug_print(
+                    "Got the required count, returning the result")
                 return phantom.APP_SUCCESS, records_list[:limit]
 
             data["offset"] += EXTRAHOP_DEFAULT_LIMIT
@@ -736,7 +777,8 @@ class ExtrahopConnector(BaseConnector):
     def _handle_detect_devices(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -758,15 +800,18 @@ class ExtrahopConnector(BaseConnector):
                 return action_result.set_status(
                     phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION.format("field_type", ", ".join(EXTRAHOP_FIELD_TYPE_LIST)))
 
-            ret_val, minutes = self._validate_integer(action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
+            ret_val, minutes = self._validate_integer(
+                action_result, param.get('minutes', 30), EXTRAHOP_MINUTES_KEY)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
-            ret_val, offset = self._validate_integer(action_result, param.get('offset', 0), EXTRAHOP_OFFSET_KEY, allow_zero=True)
+            ret_val, offset = self._validate_integer(action_result, param.get(
+                'offset', 0), EXTRAHOP_OFFSET_KEY, allow_zero=True)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
-            ret_val, limit = self._validate_integer(action_result, param.get('limit', 1000), EXTRAHOP_LIMIT_KEY)
+            ret_val, limit = self._validate_integer(
+                action_result, param.get('limit', 1000), EXTRAHOP_LIMIT_KEY)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
@@ -788,13 +833,15 @@ class ExtrahopConnector(BaseConnector):
                     }
                 }
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_DEVICES_ENDPOINT))
+        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+            EXTRAHOP_DEVICES_ENDPOINT))
         # make rest call to get devices
         if not is_json_object:
             ret_val, get_devices_response = self._paginator(
                 EXTRAHOP_DEVICES_ENDPOINT, action_result, data=data, offset=offset, limit=limit)
         else:
-            ret_val, get_devices_response = self._make_rest_call(EXTRAHOP_DEVICES_ENDPOINT, action_result, json=data, method="post")
+            ret_val, get_devices_response = self._make_rest_call(
+                EXTRAHOP_DEVICES_ENDPOINT, action_result, json=data, method="post")
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # so just return from here
@@ -812,7 +859,8 @@ class ExtrahopConnector(BaseConnector):
     def _handle_create_device(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -833,7 +881,8 @@ class ExtrahopConnector(BaseConnector):
             # Custom device definition
             name = param.get('name', "Phantom-{}".format(ip_address))
             author = param.get('author', 'Phantom')
-            description = param.get('description', 'Device created by Phantom integration for endpoint inspection')
+            description = param.get(
+                'description', 'Device created by Phantom integration for endpoint inspection')
             cidr = param.get('cidr')
 
             # Create the new [device]
@@ -847,7 +896,8 @@ class ExtrahopConnector(BaseConnector):
                 }]
             }
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_CUSTOM_DEVICES_ENDPOINT))
+        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(
+            EXTRAHOP_CUSTOM_DEVICES_ENDPOINT))
 
         # make rest call to create the custom device
         ret_val, _ = self._make_rest_call(
@@ -876,24 +926,28 @@ class ExtrahopConnector(BaseConnector):
     def _handle_tag_device(self, param):
 
         # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
 
         # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         tag = param['tag']
 
-        ret_val, eh_api_id = self._get_extrahop_api_device_id(param, action_result)
+        ret_val, eh_api_id = self._get_extrahop_api_device_id(
+            param, action_result)
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
             # so just return from here
             return action_result.get_status()
 
-        self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_TAGS_ENDPOINT))
+        self.save_progress(
+            EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_TAGS_ENDPOINT))
 
         # make rest call to get all tags
-        ret_val, get_tags_response = self._make_rest_call(EXTRAHOP_TAGS_ENDPOINT, action_result)
+        ret_val, get_tags_response = self._make_rest_call(
+            EXTRAHOP_TAGS_ENDPOINT, action_result)
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -912,10 +966,12 @@ class ExtrahopConnector(BaseConnector):
                 "name": tag
             }
 
-            self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_TAGS_ENDPOINT))
+            self.save_progress(
+                EXTRAHOP_DEBUG_REST_ENDPOINT.format(EXTRAHOP_TAGS_ENDPOINT))
 
             # make rest call to create the tag
-            ret_val, _ = self._make_rest_call(EXTRAHOP_TAGS_ENDPOINT, action_result, json=tag_body, method="post")
+            ret_val, _ = self._make_rest_call(
+                EXTRAHOP_TAGS_ENDPOINT, action_result, json=tag_body, method="post")
 
             if phantom.is_fail(ret_val):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -923,7 +979,8 @@ class ExtrahopConnector(BaseConnector):
                 return action_result.get_status()
 
             returned_location = self._response_headers.get('location')
-            ret_val, tag_id = self._parse_extrahop_location_header(returned_location, action_result)
+            ret_val, tag_id = self._parse_extrahop_location_header(
+                returned_location, action_result)
 
             if phantom.is_fail(ret_val):
                 # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -939,7 +996,8 @@ class ExtrahopConnector(BaseConnector):
         self.save_progress(EXTRAHOP_DEBUG_REST_ENDPOINT.format(tag_assign_uri))
 
         # make rest call to assign the tag to the device
-        ret_val, _ = self._make_rest_call(tag_assign_uri, action_result, json=assign_tag_body, method="post")
+        ret_val, _ = self._make_rest_call(
+            tag_assign_uri, action_result, json=assign_tag_body, method="post")
 
         if phantom.is_fail(ret_val):
             # the call to the 3rd party device or service failed, action result should contain all the error details
@@ -960,13 +1018,15 @@ class ExtrahopConnector(BaseConnector):
 
     def _handle_get_metrics(self, param):
 
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         json_object = param.get("json_object")
         if json_object:
             self.debug_print("Validating JSON object")
-            ret_val, json_object = self._validate_json_object(action_result, param)
+            ret_val, json_object = self._validate_json_object(
+                action_result, param)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             start_time = json_object.get("from")
@@ -975,7 +1035,8 @@ class ExtrahopConnector(BaseConnector):
             param["end_time"] = end_time
             param["json_object"] = json_object
         else:
-            ret_val, minutes = self._validate_integer(action_result, param.get("minutes", 30), "minutes")
+            ret_val, minutes = self._validate_integer(
+                action_result, param.get("minutes", 30), "minutes")
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
@@ -984,7 +1045,8 @@ class ExtrahopConnector(BaseConnector):
 
         ret_val, metrics = self._process_metrics(param, action_result)
         if phantom.is_fail(ret_val):
-            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                action_result.get_message()))
             return action_result.get_status()
 
         message = "Successfully received metrics data"
@@ -1048,7 +1110,8 @@ class ExtrahopConnector(BaseConnector):
         )
 
         if phantom.is_fail(ret_val):
-            self.debug_print("Error occurred while adding the note: {}".format(message))
+            self.debug_print(
+                "Error occurred while adding the note: {}".format(message))
 
     def _create_hash(self, data):
 
@@ -1061,7 +1124,8 @@ class ExtrahopConnector(BaseConnector):
             input_dict_str = json.dumps(data, sort_keys=True)
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
-            self.debug_print('Error occurred in _create_hash. {0}'.format(error_message))
+            self.debug_print(
+                'Error occurred in _create_hash. {0}'.format(error_message))
             return None
 
         return hashlib.sha256(UnicodeDammit(input_dict_str).unicode_markup.encode('utf-8')).hexdigest()
@@ -1075,25 +1139,29 @@ class ExtrahopConnector(BaseConnector):
             resp = request_func(url, verify=EXTRAHOP_VERIFY_SERVER_FAIL)
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
-            self.debug_print("Error connecting to server. Details: {0}".format(error_message))
+            self.debug_print(
+                "Error connecting to server. Details: {0}".format(error_message))
         else:
             try:
                 soar_data = json.loads(resp.text)
             except Exception as e:
                 error_message = self._get_error_message_from_exception(e)
-                self.debug_print("Error while parsing the response. {}".format(error_message))
+                self.debug_print(
+                    "Error while parsing the response. {}".format(error_message))
 
         return soar_data
 
     def _modify_description(self, updated_description):
-        markdown_data = re.findall(EXTRAHOP_MARKDOWN_REGEX, updated_description)
+        markdown_data = re.findall(
+            EXTRAHOP_MARKDOWN_REGEX, updated_description)
 
         for markdown in markdown_data:
             # Discarded the fields after '?' in markdown as the timestamps
             # for from and until is changing frequently. which cause the
             # artifact duplication (only timestamp is changing)
             new_markdown = markdown.split("?")
-            updated_description = updated_description.replace(markdown, new_markdown[0])
+            updated_description = updated_description.replace(
+                markdown, new_markdown[0])
         return updated_description
 
     def _ingest_detection(self, action_result, data_list, param, data_type):
@@ -1121,25 +1189,30 @@ class ExtrahopConnector(BaseConnector):
             container["severity"] = severity_level
             status, message, container_id = self.save_container(container)
             if phantom.is_fail(status):
-                self.debug_print(EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
+                self.debug_print(
+                    EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
                 continue
 
             artifact_info = None
             if self._platform_url:
-                extrahop_link = "{}/extrahop/#/detections/detail/{}".format(self._platform_url, data_id)
+                extrahop_link = "{}/extrahop/#/detections/detail/{}".format(
+                    self._platform_url, data_id)
                 data["extrahop_link"] = extrahop_link
 
             if EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE in message:
                 self.debug_print(EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE)
-                artifact_info = self._make_rest_call_to_soar(EXTRAHOP_SOAR_ARTIFACT_ENDPOINT.format(container_id), soar_data=artifact_info)
+                artifact_info = self._make_rest_call_to_soar(
+                    EXTRAHOP_SOAR_ARTIFACT_ENDPOINT.format(container_id), soar_data=artifact_info)
 
             old_sdi = ""
             old_description = ""
             mod_time = None
             if artifact_info and artifact_info.get("data"):
                 # taking the source_data_identifier of latest artifact
-                old_sdi = artifact_info.get("data")[0].get("source_data_identifier")
-                old_description = artifact_info.get("data")[0].get("cef", "").get("description", "")
+                old_sdi = artifact_info.get("data")[0].get(
+                    "source_data_identifier")
+                old_description = artifact_info.get("data")[0].get(
+                    "cef", "").get("description", "")
             if data.get("update_time"):
                 update_time = data.pop("update_time")
             if data.get("mod_time"):
@@ -1154,7 +1227,8 @@ class ExtrahopConnector(BaseConnector):
             data["description"] = updated_description
             sdi = self._create_hash(data)
             if old_sdi == sdi:
-                self.debug_print(EXTRAHOP_ARTIFACT_SAME_SDI.format(sdi, container_id))
+                self.debug_print(
+                    EXTRAHOP_ARTIFACT_SAME_SDI.format(sdi, container_id))
                 continue
 
             data.update({
@@ -1175,11 +1249,13 @@ class ExtrahopConnector(BaseConnector):
             }]
 
             if not self._platform_url and self._instance_type == EXTRAHOP_INSTANCE_CLOUD:
-                self.debug_print("Please specify the platform URL in the asset configuration to add 'extrahop_link' in the detection artifact")
+                self.debug_print(
+                    "Please specify the platform URL in the asset configuration to add 'extrahop_link' in the detection artifact")
 
             status, message, artifact_id = self.save_artifacts(artifacts)
             if phantom.is_fail(status):
-                self.debug_print(EXTRHOP_ARTIFACT_ERROR_MESSAGE.format(message))
+                self.debug_print(
+                    EXTRHOP_ARTIFACT_ERROR_MESSAGE.format(message))
                 continue
 
             if not data.get("description"):
@@ -1188,7 +1264,8 @@ class ExtrahopConnector(BaseConnector):
             if updated_description != old_updated_description:
                 self._add_markdown(data, container_id, artifact_id)
 
-        self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(data_type, data_id, container_id))
+        self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(
+            data_type, data_id, container_id))
 
         return phantom.APP_SUCCESS
 
@@ -1202,9 +1279,12 @@ class ExtrahopConnector(BaseConnector):
         """
         processed_params = dict()
 
-        detection_category = param.get("detection_category")
-        if detection_category:
-            processed_params["detection_category"] = detection_category
+        detection_category = param.get(
+            "detection_category", EXTRAHOP_DEFAULT_DETECTION_CATEGORY)
+        detection_category = [x.strip() for x in detection_category.split(",")]
+        detection_category = list(set(filter(None, detection_category)))
+
+        processed_params["detection_category"] = detection_category
 
         detection_status = param.get("detection_status")
         final_status = set()
@@ -1227,14 +1307,18 @@ class ExtrahopConnector(BaseConnector):
         for index, participant in enumerate(data["participants"]):
             all_keys = participant.keys()
             if EXTRAHOP_DETECTION_OBJECT_VALUE not in all_keys and EXTRAHOP_DETECTION_OBJECT_ID in all_keys:
-                ret_val, response = self._make_rest_call(EXTRAHOP_DEVICE_WITH_ID_ENDPOINT.format(participant.get("object_id")), action_result)
+                ret_val, response = self._make_rest_call(EXTRAHOP_DEVICE_WITH_ID_ENDPOINT.format(
+                    participant.get("object_id")), action_result)
                 if phantom.is_fail(ret_val):
-                    self.debug_print("Not able to find the object value for the device with {} ID".format(participant.get("object_id")))
+                    self.debug_print("Not able to find the object value for the device with {} ID".format(
+                        participant.get("object_id")))
                     continue
                 if response.get("ipaddr4"):
-                    data["participants"][index]["object_value"] = response.get("ipaddr4")
+                    data["participants"][index]["object_value"] = response.get(
+                        "ipaddr4")
                 elif response.get("ipaddr6"):
-                    data["participants"][index]["object_value"] = response.get("ipaddr6")
+                    data["participants"][index]["object_value"] = response.get(
+                        "ipaddr6")
                 else:
                     data["participants"][index]["object_value"] = None
         return data
@@ -1258,10 +1342,17 @@ class ExtrahopConnector(BaseConnector):
             is_json_object = True
             try:
                 data = json.loads(json_object)
+                if not data.get('filter'):
+                    data['filter'] = {"categories": [
+                        EXTRAHOP_DEFAULT_DETECTION_CATEGORY]}
+                if data.get('filter') and not data['filter'].get('categories'):
+                    data['filter']['categories'] = [
+                        EXTRAHOP_DEFAULT_DETECTION_CATEGORY]
             except Exception:
                 return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_INVALID_FILTER_MESSAGE.format("json_object")), detections
         if not is_json_object:
-            status, processed_params = self._validate_process_detections_parameters(param, action_result)
+            status, processed_params = self._validate_process_detections_parameters(
+                param, action_result)
             if phantom.is_fail(status):
                 return action_result.get_status(), detections
 
@@ -1270,7 +1361,8 @@ class ExtrahopConnector(BaseConnector):
         limit = param.get("container_count")
         mod_time = param.get("mod_time")
 
-        self.save_progress(EXTRAHOP_RETRIEVING_DATA_MESSAGE.format("detections"))
+        self.save_progress(
+            EXTRAHOP_RETRIEVING_DATA_MESSAGE.format("detections"))
         self.debug_print(EXTRAHOP_RETRIEVING_DATA_MESSAGE.format("detections"))
 
         data.update({
@@ -1282,16 +1374,18 @@ class ExtrahopConnector(BaseConnector):
                 data["filter"]["status"] = detection_status
 
             if detection_category:
-                data["filter"]["category"] = detection_category
+                data["filter"]["categories"] = detection_category
         self.debug_print("Json_data: {}".format(data))
-        status, detections = self._paginator(EXTRAHOP_DETECTIONS_ENDPOINT, action_result, data=data, limit=limit)
+        status, detections = self._paginator(
+            EXTRAHOP_DETECTIONS_ENDPOINT, action_result, data=data, limit=limit)
         if phantom.is_fail(status):
             return action_result.get_status(), detections
 
         if not detections:
             return phantom.APP_SUCCESS, detections
 
-        self._ingest_detection(action_result, detections, param, data_type="detections")
+        self._ingest_detection(action_result, detections,
+                               param, data_type="detections")
 
         return phantom.APP_SUCCESS, detections
 
@@ -1306,9 +1400,11 @@ class ExtrahopConnector(BaseConnector):
         """
         now = int(time.time()) * 1000
         if self._is_poll_now:
-            params["mod_time"] = now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000)
+            params["mod_time"] = now - \
+                (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000)
         else:
-            params["mod_time"] = self._state.get(EXTRAHOP_DETECTION_LAST_INGESTED_TIME, now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000))
+            params["mod_time"] = self._state.get(
+                EXTRAHOP_DETECTION_LAST_INGESTED_TIME, now - (EXTRAHOP_DETECTION_DEFAULT_INTERVAL * 1000))
 
         if isinstance(params["mod_time"], int):
             for key in EXTRAHOP_INGESTION_DETECTION_KEYS:
@@ -1370,7 +1466,8 @@ class ExtrahopConnector(BaseConnector):
                 mean = value["sum"]
             # calculate standard deviation
             if count > 1:
-                std_dev = round(math.sqrt(float(value["sum2"]) / (float(count) - 1)), ndig)
+                std_dev = round(
+                    math.sqrt(float(value["sum2"]) / (float(count) - 1)), ndig)
             else:
                 std_dev = 0
             return [
@@ -1531,7 +1628,8 @@ class ExtrahopConnector(BaseConnector):
         metric_name_ordered = dict()
         for name in metric_name:
             json_data["metric_specs"] = [{"name": name}]
-            ret_val, metrics_response = self._make_rest_call(EXTRAHOP_METRICS_TOTAL_ENDPOINT, action_result, json=json_data, method="post")
+            ret_val, metrics_response = self._make_rest_call(
+                EXTRAHOP_METRICS_TOTAL_ENDPOINT, action_result, json=json_data, method="post")
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), metric_name_ordered
 
@@ -1539,9 +1637,11 @@ class ExtrahopConnector(BaseConnector):
             num_results = metrics_response.get("num_results", 0)
 
             for _ in range(num_results):
-                ret_val, metrics_response = self._make_rest_call(EXTRAHOP_METRICS_XID_ENDPOINT.format(xid), action_result)
+                ret_val, metrics_response = self._make_rest_call(
+                    EXTRAHOP_METRICS_XID_ENDPOINT.format(xid), action_result)
                 if phantom.is_fail(ret_val):
-                    self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+                    self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                        action_result.get_message()))
                     continue
                 if metrics_response["stats"][0]["values"][0]:
                     break
@@ -1590,7 +1690,8 @@ class ExtrahopConnector(BaseConnector):
     def cycle_to_msecs(self, cycle):
         """Cycle name to milliseconds."""
         default_cycle = "30sec"
-        cyclesizes = {"1sec": 1000, "30sec": 30000, "5min": 300000, "1hr": 3600000, "24hr": 86400000}
+        cyclesizes = {"1sec": 1000, "30sec": 30000,
+                      "5min": 300000, "1hr": 3600000, "24hr": 86400000}
         default_cyclesize = cyclesizes[default_cycle]
         return cyclesizes.get(cycle, default_cyclesize)
 
@@ -1661,7 +1762,8 @@ class ExtrahopConnector(BaseConnector):
             for v in val["value"]:
                 sub_metric_type = self.infer_metric_type(v, metric)
                 processor = self.metric_processor_factory(sub_metric_type)
-                list_final_response.append(self.update_final_response(final_response, processor(metric, v, tset_key)))
+                list_final_response.append(self.update_final_response(
+                    final_response, processor(metric, v, tset_key)))
 
         return list_final_response
 
@@ -1681,12 +1783,15 @@ class ExtrahopConnector(BaseConnector):
             metric_type = metric_name_type[metric]
 
             if metric_type == "tset":
-                list_final_response.extend(self.postprocess_tset(initial_response, metric, value))
+                list_final_response.extend(
+                    self.postprocess_tset(initial_response, metric, value))
             elif metric_type in ("count", "max"):
-                final_response = self.update_final_response(final_response, [(metric, value)])
+                final_response = self.update_final_response(
+                    final_response, [(metric, value)])
             elif metric_type in ("dset", "sset"):
                 processor = self.metric_processor_factory(metric_type)
-                final_response = self.update_final_response(final_response, processor(metric, value))
+                final_response = self.update_final_response(
+                    final_response, processor(metric, value))
             elif metric_type in (
                 "dcount",
                 "ddset",
@@ -1699,7 +1804,8 @@ class ExtrahopConnector(BaseConnector):
                 for val in value:
                     if len(val) > 0:
                         processor = self.metric_processor_factory(metric_type)
-                        list_final_response.append(self.update_final_response(initial_response, processor(metric, val)))
+                        list_final_response.append(self.update_final_response(
+                            initial_response, processor(metric, val)))
 
         return copy.deepcopy(final_response), list_final_response
 
@@ -1716,11 +1822,13 @@ class ExtrahopConnector(BaseConnector):
         artifacts = []
         data_id = data_list[0].get("oid")
 
-        container = self._add_container_data(data_list[0], data_type, start_time)
+        container = self._add_container_data(
+            data_list[0], data_type, start_time)
 
         status, message, container_id = self.save_container(container)
         if phantom.is_fail(status):
-            self.debug_print(EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
+            self.debug_print(
+                EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
 
         if EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE in message:
             self.debug_print(EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE)
@@ -1728,7 +1836,8 @@ class ExtrahopConnector(BaseConnector):
         # construct artifacts
         for data in data_list:
             cef = data
-            artifact_name = "{}_{} Artifact".format(data.get("oid"), data.get("time"))
+            artifact_name = "{}_{} Artifact".format(
+                data.get("oid"), data.get("time"))
 
             artifacts.append({
                 "label": param.get("label"),
@@ -1741,7 +1850,8 @@ class ExtrahopConnector(BaseConnector):
         if phantom.is_fail(status):
             self.debug_print(EXTRHOP_ARTIFACT_ERROR_MESSAGE.format(message))
 
-        self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(data_type, data_id, container_id))
+        self.debug_print(EXTRAHOP_INGESTION_MESSAGE.format(
+            data_type, data_id, container_id))
 
         return phantom.APP_SUCCESS
 
@@ -1769,7 +1879,8 @@ class ExtrahopConnector(BaseConnector):
         """
         processed_params = dict()
 
-        processed_params["metric_cycle_length"] = param.get("metric_cycle_length", "30sec")
+        processed_params["metric_cycle_length"] = param.get(
+            "metric_cycle_length", "30sec")
         if processed_params["metric_cycle_length"] not in EXTRHOP_CYCLE_SELECTION:
             return action_result.set_status(
                 phantom.APP_ERROR, EXTRAHOP_INVALID_SELECTION.format(processed_params["metric_cycle_length"],
@@ -1785,7 +1896,8 @@ class ExtrahopConnector(BaseConnector):
         if object_id:
             object_id = self.csv_to_list(object_id)
             for (index, oid) in enumerate(object_id):
-                ret_val, object_id[index] = self._validate_integer(action_result, oid, "object_id", True)
+                ret_val, object_id[index] = self._validate_integer(
+                    action_result, oid, "object_id", True)
                 if phantom.is_fail(ret_val):
                     return action_result.get_status(), processed_params
         else:
@@ -1832,7 +1944,8 @@ class ExtrahopConnector(BaseConnector):
 
         json_object = param.get("json_object")
         if not json_object:
-            status, processed_params = self._validate_process_metrics_parameters(param, action_result)
+            status, processed_params = self._validate_process_metrics_parameters(
+                param, action_result)
             if phantom.is_fail(status):
                 return action_result.get_status(), metrics
 
@@ -1850,8 +1963,10 @@ class ExtrahopConnector(BaseConnector):
             if self._is_on_poll and self._is_poll_now and "device_group" not in object_type and param.get("container_count") < len(object_id):
                 return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_CONTAINER_LIMIT_ERROR), metrics
             for index, name in enumerate(metric_name):
-                self.calc_type[name] = json_object["metric_specs"][index].get("calc_type")
-                self.percentiles[name] = json_object["metric_specs"][index].get("percentiles")
+                self.calc_type[name] = json_object["metric_specs"][index].get(
+                    "calc_type")
+                self.percentiles[name] = json_object["metric_specs"][index].get(
+                    "percentiles")
 
         start_time = param.get("start_time")
         end_time = param.get("end_time")
@@ -1881,7 +1996,8 @@ class ExtrahopConnector(BaseConnector):
         if data["until"] is None:
             data.pop("until")
         # identify what type of metric is given according to metric_name
-        status, metric_name_type = self.identify_metric_type(action_result, data, metric_name)
+        status, metric_name_type = self.identify_metric_type(
+            action_result, data, metric_name)
         if phantom.is_fail(status):
             return action_result.get_status(), None
 
@@ -1895,7 +2011,8 @@ class ExtrahopConnector(BaseConnector):
             if endpoint_object_type == "Device Group Summary":
                 endpoint = EXTRAHOP_METRICS_TOTAL_ENDPOINT
 
-        status, metrics_response = self._make_rest_call(endpoint, action_result, json=data, method="post")
+        status, metrics_response = self._make_rest_call(
+            endpoint, action_result, json=data, method="post")
         if phantom.is_fail(status):
             return action_result.get_status(), metrics_response
 
@@ -1911,15 +2028,18 @@ class ExtrahopConnector(BaseConnector):
         # num_results by default 1 for EDA
         num_results = metrics_response.get("num_results", 1)
 
-        self.debug_print("Extrahop response xid: {}, num_results: {}".format(xid, num_results))
+        self.debug_print(
+            "Extrahop response xid: {}, num_results: {}".format(xid, num_results))
         timestamp = None
         all_postprocessed_items = []
         for _ in range(num_results):
             if xid:
-                ret_val, metrics_data = self._make_rest_call(EXTRAHOP_METRICS_XID_ENDPOINT.format(xid), action_result)
+                ret_val, metrics_data = self._make_rest_call(
+                    EXTRAHOP_METRICS_XID_ENDPOINT.format(xid), action_result)
 
                 if phantom.is_fail(ret_val):
-                    self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+                    self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                        action_result.get_message()))
                     continue
             else:
                 metrics_data = metrics_response
@@ -1932,14 +2052,18 @@ class ExtrahopConnector(BaseConnector):
                     container_limit.remove(item_oid)
                     continue
                 timestamp = item["time"]
-                final_response = self.initial_response(item_oid, timestamp, data)
-                updated_final_response, list_final_response = self.postprocess_response(final_response, item, metric_name, metric_name_type)
+                final_response = self.initial_response(
+                    item_oid, timestamp, data)
+                updated_final_response, list_final_response = self.postprocess_response(
+                    final_response, item, metric_name, metric_name_type)
 
                 if self._is_on_poll:
                     if list_final_response:
-                        self._ingest_metrics(action_result, list_final_response, param, "metrics", start_time)
+                        self._ingest_metrics(
+                            action_result, list_final_response, param, "metrics", start_time)
                     if updated_final_response != final_response:
-                        self._ingest_metrics(action_result, [updated_final_response], param, "metrics", start_time)
+                        self._ingest_metrics(
+                            action_result, [updated_final_response], param, "metrics", start_time)
                 else:
                     if list_final_response:
                         all_postprocessed_items.extend(list_final_response)
@@ -1958,9 +2082,11 @@ class ExtrahopConnector(BaseConnector):
 
         now = int(time.time()) * 1000
         if self._is_poll_now:
-            params["start_time"] = now - (EXTRAHOP_METRICS_DEFAULT_INTERVAL * 1000)
+            params["start_time"] = now - \
+                (EXTRAHOP_METRICS_DEFAULT_INTERVAL * 1000)
         else:
-            params["start_time"] = self._state.get(EXTRAHOP_METRICS_LAST_INGESTED_TIME, now - (EXTRAHOP_METRICS_DEFAULT_INTERVAL * 1000))
+            params["start_time"] = self._state.get(
+                EXTRAHOP_METRICS_LAST_INGESTED_TIME, now - (EXTRAHOP_METRICS_DEFAULT_INTERVAL * 1000))
 
         if isinstance(params["start_time"], int):
             for key in EXTRAHOP_INGESTION_METRICS_KEYS:
@@ -1970,7 +2096,8 @@ class ExtrahopConnector(BaseConnector):
                     params.pop(key)
 
             if params.get("json_object"):
-                ret_val, params["json_object"] = self._validate_json_object(action_result, params)
+                ret_val, params["json_object"] = self._validate_json_object(
+                    action_result, params)
                 if phantom.is_fail(ret_val):
                     return action_result.get_status()
                 metrics_cycle = params["json_object"].get("cycle")
@@ -1979,8 +2106,10 @@ class ExtrahopConnector(BaseConnector):
 
             params["end_time"] = now
             if params["metric_cycle_length"] != "auto":
-                params["start_time"] = self.get_cycle_boundary(params["start_time"], metrics_cycle)
-                params["end_time"] = self.get_cycle_boundary(now, metrics_cycle)
+                params["start_time"] = self.get_cycle_boundary(
+                    params["start_time"], metrics_cycle)
+                params["end_time"] = self.get_cycle_boundary(
+                    now, metrics_cycle)
                 if params["start_time"] == params["end_time"]:
                     return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_METRIC_NOT_NEEDED_MESSAGE.format(self.get_asset_id()))
 
@@ -2009,13 +2138,15 @@ class ExtrahopConnector(BaseConnector):
 
     def _handle_get_packets(self, param):
 
-        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(self.get_action_identifier()))
+        self.save_progress(EXTRAHOP_ACTION_HANDLER_MESSAGE.format(
+            self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         json_object = param.get("json_object")
         if json_object:
             self.debug_print("Validating JSON object")
-            ret_val, json_object = self._validate_json_object_packets(action_result, json_object)
+            ret_val, json_object = self._validate_json_object_packets(
+                action_result, json_object)
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
             start_time = json_object.get("from")
@@ -2023,7 +2154,8 @@ class ExtrahopConnector(BaseConnector):
             param["start_time"] = start_time
             param["end_time"] = end_time
         else:
-            ret_val, minutes = self._validate_integer(action_result, param.get("minutes", 30), "minutes")
+            ret_val, minutes = self._validate_integer(
+                action_result, param.get("minutes", 30), "minutes")
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
@@ -2032,7 +2164,8 @@ class ExtrahopConnector(BaseConnector):
 
         ret_val, vault_id = self._process_packets(param, action_result)
         if phantom.is_fail(ret_val):
-            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+            self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                action_result.get_message()))
             return action_result.get_status()
 
         vault_id = vault_id if vault_id else None
@@ -2056,7 +2189,8 @@ class ExtrahopConnector(BaseConnector):
 
         status, message, container_id = self.save_container(container)
         if phantom.is_fail(status):
-            self.debug_print(EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
+            self.debug_print(
+                EXTRHOP_CONTAINER_ERROR_MESSAGE.format(container_id, message))
 
         if EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE in message:
             self.debug_print(EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE)
@@ -2105,12 +2239,14 @@ class ExtrahopConnector(BaseConnector):
             processed_params["ip2"] = ip2.strip()
 
         port1 = param.get("port1")
-        ret_val, processed_params["port1"] = self._validate_integer(action_result, port1, "port1", True)
+        ret_val, processed_params["port1"] = self._validate_integer(
+            action_result, port1, "port1", True)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), processed_params
 
         port2 = param.get("port2")
-        ret_val, processed_params["port2"] = self._validate_integer(action_result, port2, "port2", True)
+        ret_val, processed_params["port2"] = self._validate_integer(
+            action_result, port2, "port2", True)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), processed_params
 
@@ -2131,7 +2267,8 @@ class ExtrahopConnector(BaseConnector):
             except Exception:
                 return action_result.set_status(phantom.APP_ERROR, EXTRAHOP_INVALID_FILTER_MESSAGE.format("json_object")), packets
         if not is_json_object:
-            ret_val, processed_params = self._validate_process_packets_parameters(params, action_result)
+            ret_val, processed_params = self._validate_process_packets_parameters(
+                params, action_result)
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), packets
 
@@ -2157,7 +2294,8 @@ class ExtrahopConnector(BaseConnector):
         if data["until"] is None:
             data.pop("until")
 
-        ret_val, packets = self._make_rest_call(EXTRAHOP_PACKET_SEARCH_ENDPOINT, action_result, json=data, method="post")
+        ret_val, packets = self._make_rest_call(
+            EXTRAHOP_PACKET_SEARCH_ENDPOINT, action_result, json=data, method="post")
         if phantom.is_fail(ret_val):
             return action_result.get_status(), packets
 
@@ -2168,7 +2306,8 @@ class ExtrahopConnector(BaseConnector):
             return phantom.APP_SUCCESS, packets
 
         if self._is_on_poll:
-            ret_val = self._ingest_packets(action_result, packets, params, data_type="PCAP")
+            ret_val = self._ingest_packets(
+                action_result, packets, params, data_type="PCAP")
             if phantom.is_fail(ret_val):
                 return action_result.get_status(), packets
         else:
@@ -2188,9 +2327,11 @@ class ExtrahopConnector(BaseConnector):
     def _poll_for_packets(self, action_result, params, config):
         now = int(time.time()) * 1000
         if self._is_poll_now:
-            params["start_time"] = now - (EXTRAHOP_PACKETS_DEFAULT_INTERVAL * 1000)
+            params["start_time"] = now - \
+                (EXTRAHOP_PACKETS_DEFAULT_INTERVAL * 1000)
         else:
-            params["start_time"] = self._state.get(EXTRAHOP_PACKETS_LAST_INGESTED_TIME, now - (EXTRAHOP_PACKETS_DEFAULT_INTERVAL * 1000))
+            params["start_time"] = self._state.get(
+                EXTRAHOP_PACKETS_LAST_INGESTED_TIME, now - (EXTRAHOP_PACKETS_DEFAULT_INTERVAL * 1000))
         params["end_time"] = now
         if isinstance(params["start_time"], int):
             for key in EXTRAHOP_INGESTION_PACKETS_KEYS:
@@ -2246,17 +2387,20 @@ class ExtrahopConnector(BaseConnector):
         if ingestion_type == "Detections":
             status = self._poll_for_detections(action_result, params, config)
             if phantom.is_fail(status):
-                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                    action_result.get_message()))
                 return action_result.get_status()
         elif ingestion_type == "Metrics":
             status = self._poll_for_metrics(action_result, params, config)
             if phantom.is_fail(status):
-                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                    action_result.get_message()))
                 return action_result.get_status()
         elif ingestion_type == "PCAP":
             status = self._poll_for_packets(action_result, params, config)
             if phantom.is_fail(status):
-                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(action_result.get_message()))
+                self.debug_print(EXTRAHOP_DEFAULT_ERROR.format(
+                    action_result.get_message()))
                 return action_result.get_status()
 
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -2321,7 +2465,8 @@ class ExtrahopConnector(BaseConnector):
         self._state = self.load_state()
         if not isinstance(self._state, dict):
             self.debug_print(EXTRAHOP_STATE_FILE_CORRUPT_ERROR)
-            self._state = {"app_version": self.get_app_json().get("app_version")}
+            self._state = {
+                "app_version": self.get_app_json().get("app_version")}
 
         # get the asset config
         config = self.get_config()
@@ -2364,13 +2509,15 @@ class ExtrahopConnector(BaseConnector):
 
     def decrypt_state(self):
         """Decrypt the token."""
-        state_access_token = self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING, {}).get(EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING)
+        state_access_token = self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING, {}).get(
+            EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING)
         if state_access_token and self._state.get(EXTRAHOP_OAUTH_ACCESS_TOKEN_IS_ENCRYPTED, False):
             try:
                 return encryption_helper.decrypt(self._state.get(EXTRAHOP_OAUTH_TOKEN_STRING)
                                                  .get(EXTRAHOP_OAUTH_ACCESS_TOKEN_STRING), self._asset_id)
             except Exception as ex:
-                self.debug_print("{}: {}".format(EXTRAHOP_DECRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+                self.debug_print("{}: {}".format(
+                    EXTRAHOP_DECRYPTION_ERROR, self._get_error_message_from_exception(ex)))
         return None
 
     def encrypt_state(self):
@@ -2378,7 +2525,8 @@ class ExtrahopConnector(BaseConnector):
         try:
             return encryption_helper.encrypt(self._access_token, self._asset_id)
         except Exception as ex:
-            self.debug_print("{}: {}".format(EXTRAHOP_ENCRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+            self.debug_print("{}: {}".format(
+                EXTRAHOP_ENCRYPTION_ERROR, self._get_error_message_from_exception(ex)))
         return None
 
 
@@ -2396,7 +2544,8 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
-    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
+    argparser.add_argument('-v', '--verify', action='store_true',
+                           help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
@@ -2415,7 +2564,8 @@ if __name__ == '__main__':
         try:
             login_url = "{}login".format(BaseConnector._get_phantom_base_url())
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=verify, timeout=EXTRAHOP_DEFAULT_TIMEOUT)
+            r = requests.get(login_url, verify=verify,
+                             timeout=EXTRAHOP_DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -2428,7 +2578,8 @@ if __name__ == '__main__':
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=EXTRAHOP_DEFAULT_TIMEOUT)
+            r2 = requests.post(login_url, verify=verify, data=data,
+                               headers=headers, timeout=EXTRAHOP_DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
