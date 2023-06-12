@@ -16,8 +16,9 @@ and limitations under the License.
 <head></head>
 <body>
 	<h1>App Backward Compatibility</h1>
-	<p>This app is not backward compatible with extrahop appliance versions below 9.1.2. Version 9.1.2 or higher is
+	<p>This app is not backward compatible with extrahop appliance versions below 9.3.0. Version 9.3.0 or higher is
 	recommended.</p>
+	<p>The multiple category support is only compatible with ExtraHop appliance version greater or equal to 9.3.0.</p>
 	<h1>Integrate ExtraHop Reveal(x)</h1>
 	<p>The Splunk SOAR integration for ExtraHop enables you to automate and orchestrate rapid security investigation, response, and remediation workflows. ExtraHop Reveal(x) provides a uniquely rich, real-time data source by turning unstructured packets into structured wire data and analyzing it in real-time. Based on this data, you can confidently configure Splunk SOAR to automate security workflows and investigations and orchestrate precise, rapid responses to security threats more effectively than ever before.</p>
 	<p>Extrahop and Splunk SOAR connect through simple, powerful REST APIs, making it easy to build and iterate new use cases to get the most value for the least effort, a vital capability for thinly stretched enterprise security teams.</p>
@@ -69,10 +70,11 @@ and limitations under the License.
 	For detection, while manual polling and in the <b>first run</b> of scheduled/interval polling, it will retrieve the data from the past 1 hour.
 	<ul>
 		<li>
-			<b>Detection category: </b> Specify the category of detections you want to retrieve. If left blank, the poll retrieves detections from all categories. The following are the valid values that the parameter can take:
+			<b>Detection category: </b> Specify the category of detections you want to retrieve. Specify a comma-delimited list to poll for more than one categories. If left blank, the poll retrieves detections of <b>sec.attack</b> category. The following are the valid values that the parameter can take:
 			<ul>
 				<li>sec</li>
 				<li>sec.action</li>
+				<li>sec.attack</li>
 				<li>sec.botnet</li>
 				<li>sec.caution</li>
 				<li>sec.command</li>
@@ -113,6 +115,10 @@ and limitations under the License.
 		</li>
 		<li>
 			Based on the description provided in detection, a Splunk SOAR note will be added. It will only be added again if the description is updated apart from the timestamp field.
+		</li>
+		<li>
+			<b>Note:</b>
+			<p>Default detection category will be considered as "sec.attack" in 'json_object' and 'detection_category' configuration parameters</p>
 		</li>
 	</ul>
 	<h2><b>Metric settings</b><br></h2>

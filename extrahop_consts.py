@@ -25,6 +25,7 @@ EXTRAHOP_PACKETS_LAST_INGESTED_TIME = "packets_last_ingested_time"
 EXTRAHOP_MARKDOWN_REGEX = r"(\[[^\]]+\]\(\#\/[^\)]+\))+"
 EXTRAHOP_DETECTION_OBJECT_VALUE = "object_value"
 EXTRAHOP_DETECTION_OBJECT_ID = "object_id"
+EXTRAHOP_DEFAULT_DETECTION_CATEGORY = "sec.attack"
 
 # Error and status messages
 EXTRAHOP_ERROR_MESSAGE_UNAVAILABLE = 'Error message unavailable. Please check the asset configuration and|or action parameters'
