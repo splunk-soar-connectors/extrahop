@@ -1,6 +1,6 @@
 # File: extrahop_consts.py
 #
-# Copyright (c) 2018-2023 ExtraHop
+# Copyright (c) 2018-2025 ExtraHop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,10 +28,11 @@ EXTRAHOP_DETECTION_OBJECT_ID = "object_id"
 EXTRAHOP_DEFAULT_DETECTION_CATEGORY = "sec.attack"
 
 # Error and status messages
-EXTRAHOP_ERROR_MESSAGE_UNAVAILABLE = 'Error message unavailable. Please check the asset configuration and|or action parameters'
+EXTRAHOP_ERROR_MESSAGE_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
 EXTRAHOP_DEBUG_REST_ENDPOINT = "Making REST call to {}"
-EXTRAHOP_STATE_FILE_CORRUPT_ERROR = "Error occurred while loading the state file due to its unexpected format. " \
-    "Resetting the state file with the default format."
+EXTRAHOP_STATE_FILE_CORRUPT_ERROR = (
+    "Error occurred while loading the state file due to its unexpected format. Resetting the state file with the default format."
+)
 EXTRAHOP_CONTAINER_LIMIT_ERROR = "Container count should be greater than or equal to the number of object_ids"
 EXTRAHOP_METRIC_REQUIRED_PARAM = "Required parameters: metric_cycle_length, object_type, object_id, metric_category and metric_name"
 EXTRAHOP_METRIC_REQUIRED_API_PARAM = "API required parameters: cycle, object_type, object_ids, metric_category and metric_specs"
@@ -43,19 +44,19 @@ EXTRHOP_ARTIFACT_ERROR_MESSAGE = "Error occurred while saving the artifact(s): {
 EXTRAHOP_ARTIFACT_SAME_SDI = "Artifact already exist with SDI ({}). Hence skipping the ingestion for container with id {}"
 
 # Endpoints
-EXTRAHOP_TOKEN_ENDPOINT = '/oauth2/token'
-EXTRAHOP_DEVICES_ENDPOINT = '/api/v1/devices/search'
-EXTRAHOP_DEVICE_WITH_ID_ENDPOINT = '/api/v1/devices/{}'
-EXTRAHOP_BASIC_DETAILS_ENDPOINT = '/api/v1/extrahop'
-EXTRAHOP_ACTIVITY_MAP_ENDPOINT = '/api/v1/activitymaps/query'
-EXTRAHOP_CUSTOM_DEVICES_ENDPOINT = '/api/v1/customdevices'
-EXTRAHOP_TAGS_ENDPOINT = '/api/v1/tags'
-EXTRAHOP_TAG_TO_DEVICE_ENDPOINT = '/api/v1/tags/{}/devices'
-EXTRAHOP_DETECTIONS_ENDPOINT = '/api/v1/detections/search'
-EXTRAHOP_METRICS_ENDPOINT = '/api/v1/metrics'
-EXTRAHOP_METRICS_TOTAL_ENDPOINT = '/api/v1/metrics/total'
-EXTRAHOP_METRICS_XID_ENDPOINT = '/api/v1/metrics/next/{}'
-EXTRAHOP_PACKET_SEARCH_ENDPOINT = '/api/v1/packets/search'
+EXTRAHOP_TOKEN_ENDPOINT = "/oauth2/token"
+EXTRAHOP_DEVICES_ENDPOINT = "/api/v1/devices/search"
+EXTRAHOP_DEVICE_WITH_ID_ENDPOINT = "/api/v1/devices/{}"
+EXTRAHOP_BASIC_DETAILS_ENDPOINT = "/api/v1/extrahop"
+EXTRAHOP_ACTIVITY_MAP_ENDPOINT = "/api/v1/activitymaps/query"
+EXTRAHOP_CUSTOM_DEVICES_ENDPOINT = "/api/v1/customdevices"
+EXTRAHOP_TAGS_ENDPOINT = "/api/v1/tags"
+EXTRAHOP_TAG_TO_DEVICE_ENDPOINT = "/api/v1/tags/{}/devices"
+EXTRAHOP_DETECTIONS_ENDPOINT = "/api/v1/detections/search"
+EXTRAHOP_METRICS_ENDPOINT = "/api/v1/metrics"
+EXTRAHOP_METRICS_TOTAL_ENDPOINT = "/api/v1/metrics/total"
+EXTRAHOP_METRICS_XID_ENDPOINT = "/api/v1/metrics/next/{}"
+EXTRAHOP_PACKET_SEARCH_ENDPOINT = "/api/v1/packets/search"
 EXTRAHOP_SOAR_ARTIFACT_ENDPOINT = "/artifact?_filter_container__in=[{}]"
 
 # Default values
@@ -66,14 +67,14 @@ EXTRAHOP_METRICS_DEFAULT_INTERVAL = 3600
 EXTRAHOP_PACKETS_DEFAULT_INTERVAL = 3600
 
 # Constant values
-EXTRAHOP_INSTANCE_CLOUD = 'Reveal(x) 360'
-EXTRAHOP_INSTANCE_ON_PREM = 'Reveal(x) Enterprise'
+EXTRAHOP_INSTANCE_CLOUD = "Reveal(x) 360"
+EXTRAHOP_INSTANCE_ON_PREM = "Reveal(x) Enterprise"
 EXTRAHOP_INVALID_CLIENT_MESSAGE = 'Status Code: 400 Data from server: {"error":"invalid_client"}'
-EXTRAHOP_INVALID_EXPIRED_MESSAGE = 'Status Code: 400 Data from server: invalid'
+EXTRAHOP_INVALID_EXPIRED_MESSAGE = "Status Code: 400 Data from server: invalid"
 EXTRAHOP_INVALID_EXPIRED_2_MESSAGE = 'Status Code: 401 Data from server: {"error_message":"Invalid access token"}'
-EXTRAHOP_ACTION_HANDLER_MESSAGE = 'In action handler for: {0}'
-EXTRAHOP_INVALID_FILTER_MESSAGE = 'Unable to parse JSON for \'{}\' parameter'
-EXTRAHOP_RETRIEVING_DATA_MESSAGE = 'Retrieving {} from Extrahop'
+EXTRAHOP_ACTION_HANDLER_MESSAGE = "In action handler for: {0}"
+EXTRAHOP_INVALID_FILTER_MESSAGE = "Unable to parse JSON for '{}' parameter"
+EXTRAHOP_RETRIEVING_DATA_MESSAGE = "Retrieving {} from Extrahop"
 EXTRAHOP_INGESTION_MESSAGE = "{} id ({}) is ingested in container id ({})"
 EXTRAHOP_INGESTION_START_MESSAGE = "Ingesting the data"
 EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE = "Duplicate container found"
@@ -110,15 +111,7 @@ EXTRAHOP_OBJECT_TYPE = {
     "Device Group": "device_group",
     "Device Group Summary": "device_group",
     "Application": "application",
-    "Network": "network"
+    "Network": "network",
 }
 
-EXTRAHOP_VTYPE = {
-    "count": "dcount",
-    "dmax": "dcount",
-    "dset": "ddset",
-    "max": "dmax",
-    "tset": "tset",
-    "time": "time",
-    "snap": "dsnap"
-}
+EXTRAHOP_VTYPE = {"count": "dcount", "dmax": "dcount", "dset": "ddset", "max": "dmax", "tset": "tset", "time": "time", "snap": "dsnap"}

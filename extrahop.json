@@ -9,7 +9,7 @@
     "product_name": "ExtraHop Reveal(x)",
     "product_version_regex": ".*",
     "publisher": "ExtraHop",
-    "license": "Copyright (c) 2018-2023 ExtraHop",
+    "license": "Copyright (c) 2018-2025 ExtraHop",
     "app_version": "3.1.0",
     "utctime_updated": "2022-01-07T21:06:53.000000Z",
     "package_name": "phantom_extrahop",
