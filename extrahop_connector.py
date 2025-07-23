@@ -377,7 +377,7 @@ class ExtrahopConnector(BaseConnector):
 
         # If token is expired or invalid, generate a new token
         msg = action_result.get_message()
-        if phantom.is_fail(ret_val) and msg and (EXTRAHOP_INVALID_EXPIRED_MESSAGE in msg or EXTRAHOP_INVALID_EXPIRED_2_MESSAGE in msg):
+        if phantom.is_fail(ret_val) and msg and any(invalid_msg in msg for invalid_msg in EXTRAHOP_EXPIRED_TOKEN_MESSAGES):
             self.debug_print("Token is expired or invalid")
             ret_val = self._generate_new_access_token(action_result)
             if phantom.is_fail(ret_val):
