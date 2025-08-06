@@ -70,14 +70,18 @@ EXTRAHOP_PACKETS_DEFAULT_INTERVAL = 3600
 EXTRAHOP_INSTANCE_CLOUD = "Reveal(x) 360"
 EXTRAHOP_INSTANCE_ON_PREM = "Reveal(x) Enterprise"
 EXTRAHOP_INVALID_CLIENT_MESSAGE = 'Status Code: 400 Data from server: {"error":"invalid_client"}'
-EXTRAHOP_INVALID_EXPIRED_MESSAGE = "Status Code: 400 Data from server: invalid"
-EXTRAHOP_INVALID_EXPIRED_2_MESSAGE = 'Status Code: 401 Data from server: {"error_message":"Invalid access token"}'
 EXTRAHOP_ACTION_HANDLER_MESSAGE = "In action handler for: {0}"
 EXTRAHOP_INVALID_FILTER_MESSAGE = "Unable to parse JSON for '{}' parameter"
 EXTRAHOP_RETRIEVING_DATA_MESSAGE = "Retrieving {} from Extrahop"
 EXTRAHOP_INGESTION_MESSAGE = "{} id ({}) is ingested in container id ({})"
 EXTRAHOP_INGESTION_START_MESSAGE = "Ingesting the data"
 EXTRAHOP_DUPLICATE_CONTAINER_MESSAGE = "Duplicate container found"
+EXTRAHOP_EXPIRED_TOKEN_MESSAGES = [
+    "Status Code: 400 Data from server: The specified access token is invalid",
+    'Status Code: 401 Data from server: {"error_message": "Error getting user from bearer token"}',
+    "Status Code: 400 Data from server: invalid",
+    'Status Code: 401 Data from server: {"error_message":"Invalid access token"}',
+]
 
 # Validation for value_list
 EXTRAHOP_PEER_ROLE_LIST = ["client", "server", "any"]

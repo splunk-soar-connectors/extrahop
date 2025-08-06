@@ -18,6 +18,7 @@
     "min_phantom_version": "6.0.0",
     "app_wizard_version": "1.0.0",
     "fips_compliant": true,
+    "latest_tested_versions": ["ExtraHop 25.2.3.2053"],
     "configuration": {
         "instance_type": {
             "description": "Type of asset",
