@@ -10,15 +10,17 @@
     "product_version_regex": ".*",
     "publisher": "ExtraHop",
     "license": "Copyright (c) 2018-2025 ExtraHop",
-    "app_version": "3.1.1",
-    "utctime_updated": "2025-04-11T19:45:57.240464Z",
+    "app_version": "3.1.2",
+    "utctime_updated": "2025-08-06T16:00:27.747283Z",
     "package_name": "phantom_extrahop",
     "python_version": "3",
     "main_module": "extrahop_connector.py",
     "min_phantom_version": "6.0.0",
     "app_wizard_version": "1.0.0",
     "fips_compliant": true,
-    "latest_tested_versions": ["ExtraHop 25.2.3.2053"],
+    "latest_tested_versions": [
+        "ExtraHop 25.2.3.2053"
+    ],
     "configuration": {
         "instance_type": {
             "description": "Type of asset",

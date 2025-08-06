@@ -1,7 +1,7 @@
 # ExtraHop Reveal(x)
 
 Publisher: ExtraHop \
-Connector Version: 3.1.1 \
+Connector Version: 3.1.2 \
 Product Vendor: ExtraHop Networks \
 Product Name: ExtraHop Reveal(x) \
 Minimum Product Version: 6.0.0
