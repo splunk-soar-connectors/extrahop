@@ -13,7 +13,7 @@
     "app_version": "3.1.2",
     "utctime_updated": "2025-08-06T16:00:27.747283Z",
     "package_name": "phantom_extrahop",
-    "python_version": "3, 3.13",
+    "python_version": "3.9, 3.13",
     "main_module": "extrahop_connector.py",
     "min_phantom_version": "6.0.0",
     "app_wizard_version": "1.0.0",
