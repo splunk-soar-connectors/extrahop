@@ -307,16 +307,14 @@ class ExtrahopConnector(BaseConnector):
         """
         self.debug_print("Generating new token with provided client ID and secret")
 
-        data = {
-            "grant_type": "client_credentials"
-        }
+        data = {"grant_type": "client_credentials"}
 
         to_encode = f"{self._client_id}:{self._client_secret}"
         base64_encoded_id_secret = base64.b64encode(to_encode.encode()).decode()
 
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Basic {}".format(base64_encoded_id_secret),
+            "Authorization": f"Basic {base64_encoded_id_secret}",
         }
         url = f"{self._base_url}{EXTRAHOP_TOKEN_ENDPOINT}"
 
