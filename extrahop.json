@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "ExtraHop",
     "license": "Copyright (c) 2018-2026 ExtraHop",
-    "app_version": "3.1.2",
+    "app_version": "3.2.0",
     "utctime_updated": "2025-08-06T16:00:27.747283Z",
     "package_name": "phantom_extrahop",
     "python_version": "3.9, 3.13",
