@@ -1,6 +1,6 @@
 # File: extrahop_connector.py
 #
-# Copyright (c) 2018-2025 ExtraHop
+# Copyright (c) 2018-2026 ExtraHop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
+import base64
 import copy
 import hashlib
 import ipaddress
@@ -304,16 +305,20 @@ class ExtrahopConnector(BaseConnector):
         :param action_result: object of ActionResult class
         :return: status(phantom.APP_SUCCESS/phantom.APP_ERROR)
         """
-        self.debug_print("Generating new token...........")
-        data = {
-            "client_id": self._client_id,
-            "client_secret": self._client_secret,
-            "grant_type": "client_credentials",
-        }
+        self.debug_print("Generating new token with provided client ID and secret")
 
+        data = {"grant_type": "client_credentials"}
+
+        to_encode = f"{self._client_id}:{self._client_secret}"
+        base64_encoded_id_secret = base64.b64encode(to_encode.encode()).decode()
+
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {base64_encoded_id_secret}",
+        }
         url = f"{self._base_url}{EXTRAHOP_TOKEN_ENDPOINT}"
 
-        ret_val, resp_json = self._make_main_rest_call(url, action_result, data=data, method="post")
+        ret_val, resp_json = self._make_main_rest_call(url, action_result, headers=headers, data=data, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
