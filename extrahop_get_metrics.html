@@ -127,7 +127,7 @@ and limitations under the License.
                 <tr>
                   <td>
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['extrahop api id'], 'value':'{{ data.oid }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['extrahop api id'], 'value':'{{ data.oid|escapejs }}' }], 0, {{ container.id|escapejs }}, null, false);">
                       {{ data.oid }}
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                     </a>

@@ -1,3 +1,4 @@
 **Unreleased**
 
 * Restrict downloaded packet capture files to the vault temporary directory.
+* Escape ExtraHop metrics widget values embedded in inline JavaScript.
