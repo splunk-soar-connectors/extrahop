@@ -242,8 +242,15 @@ class ExtrahopConnector(BaseConnector):
             )
 
         filename = self._response_headers["Content-Disposition"].split("filename=")[-1]
-        filename = filename.replace('"', "")
-        file_path = f"{local_dir}/{filename}"
+        filename = os.path.basename(filename.replace('"', ""))
+        if not filename or filename in {".", ".."} or "/" in filename or "\\" in filename:
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid packet capture filename returned by ExtraHop"), None)
+
+        local_dir = os.path.realpath(local_dir)
+        file_path = os.path.realpath(os.path.join(local_dir, filename))
+        if os.path.commonpath([local_dir, file_path]) != local_dir:
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Packet capture filename escapes the vault temporary directory"), None)
+
         self.file_path = file_path
         try:
             with open(file_path, "wb") as f:
